@@ -1,0 +1,64 @@
+image: docker.io/feldflachs9k/android-fastlane:latest
+
+variables:
+  ANDROID_HOME: /opt/android-sdk
+  
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .gradle/
+    - vendor/bundle/
+    - .bundle/
+
+stages:
+  - build
+  - release
+
+build_app:
+  stage: build
+  script:
+
+    - cd $CI_PROJECT_DIR
+
+
+    # Download secure files mit glab ee
+
+    - glab auth login --job-token $CI_JOB_TOKEN --hostname $CI_SERVER_FQDN --api-protocol $CI_SERVER_PROTOCOL
+    - glab -R $CI_PROJECT_PATH securefile download --all --output-dir=".secure_files"
+    
+    # Dateien anzeigen
+    
+    # Set Firebase credentials
+    - export GOOGLE_APPLICATION_CREDENTIALS=$CI_PROJECT_DIR/.secure_files/test-b91aa-firebase-adminsdk-fbsvc-4f3a2b3327.json
+
+
+
+    - ls -la 
+    - chmod +x gradlew
+    - ls -la 
+    - bundle update fastlane
+    - bundle exec fastlane beta
+  artifacts:
+      paths:
+        - app/build/outputs/apk/debug/*.apk
+      expire_in: 30 days
+      name: "beta-build-$CI_COMMIT_SHORT_SHA"
+      
+create_release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_TAG
+  needs:
+    - job: build_app
+      artifacts: true
+  script:
+    - echo "Creating release for $CI_COMMIT_TAG"
+  release:
+    name: 'Beta Release $CI_COMMIT_TAG'
+    tag_name: '$CI_COMMIT_TAG'
+    description: 'Beta build from CI/CD pipeline'
+    assets:
+      links:
+        - name: 'app-debug.apk'
+          url: '${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/file/app/build/outputs/apk/debug/app-debug.apk'
