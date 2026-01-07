@@ -16,21 +16,20 @@
 default_platform(:android)
 
 platform :android do
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "test")
-  end
 
   desc "Submit a new Beta Build to Firebase Beta"
   lane :beta do
     gradle(task: "clean assembleRelease")
+    # sh "your_script.sh"
+    # You can also use other beta testing services here
+  end
+  
+  desc "Deploy to Firebase App Distribution"
+  lane :deploy do
     firebase_app_distribution(
       app: "1:507791721804:android:1209770383c12ce846bbe9", 
       groups: "testers",
       release_notes: "Beta build from fastlane"
     )
-
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
   end
 end
