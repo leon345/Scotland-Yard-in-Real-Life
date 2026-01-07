@@ -1,3 +1,12 @@
+import java.io.FileInputStream
+import java.util.Properties
+
+val keystorePropertiesFile = rootProject.file(".secure_files/release-keystore.properties")
+
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +15,17 @@ plugins {
 
 android {
     namespace = "de.leonseeger.scotlandyardinreallife"
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as String?
+            keyPassword = keystoreProperties["keyPassword"] as String?
+            storeFile = keystoreProperties["storeFile"]?.let { file(it as String) }
+            storeFile = keystoreProperties["storeFile"]?.let {
+                rootProject.file(it as String)
+            }
+            storePassword = keystoreProperties["storePassword"] as String?
+        }
+    }
     compileSdk {
         version = release(36)
     }
@@ -18,6 +38,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig = signingConfigs.getByName("release")
     }
 
     buildTypes {
