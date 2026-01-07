@@ -29,7 +29,7 @@ build_app:
     # Dateien anzeigen
     
     # Set Firebase credentials
-    - export GOOGLE_APPLICATION_CREDENTIALS=$CI_PROJECT_DIR/.secure_files/test-b91aa-bfb31be98c34.json
+    - export GOOGLE_APPLICATION_CREDENTIALS=$CI_PROJECT_DIR/.secure_files/hsosscotland-yard-in-real-life-5e57c9c20b33.json
 
 
 
