@@ -29,7 +29,7 @@ build_app:
     # Dateien anzeigen
     
     # Set Firebase credentials
-    - export GOOGLE_APPLICATION_CREDENTIALS=$CI_PROJECT_DIR/.secure_files/test-b91aa-firebase-adminsdk-fbsvc-4f3a2b3327.json
+    - export GOOGLE_APPLICATION_CREDENTIALS=$CI_PROJECT_DIR/.secure_files/test-b91aa-bfb31be98c34.json
 
 
 
