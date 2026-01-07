@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             ScotlandYardInRealLifeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Android",
+                        name = "Hi CI",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
