@@ -9,4 +9,33 @@ Die Android-App soll das klassische Brettspiel Scotland Yard als Outdoor-Erlebni
 
 
 # Musskrieterien
+- Karten View erstellen
+- Ein Sielfeld auf der Karte definieren können. (Polygon)
+- Spieler können ein Spiel erstellen
+- Speiler können andere Spieler zu einem Spiel einladen
+    -  Per Link oder Code
+- Speilanpassungsmöglichkeiten:
+    - Zeitintervall für den Banditen
+    - Spieldauer
+    - Anzahl der Fähigkeiten des Banditen (Wie offt jede eingesetzt werden darf)
+- Beim erstellen eines Spiels, wird jedem Spieler eine ID inkremtel zugeteilt. 
+    - Der Scope der ID ist nur in einem Spiel eindeutig. Nicht global
+- Ein Spieler kann nur in einem Spiel sein
+- Es werden keine Spielergebnisse auf einem Server persistiert. 
+- Ein Spieler muss die Möglichekit haben seinen Standort zur Laufzeit eines Spiels zu übertragen
+    - Live automatisch in kurzen Zeitintervall (5 sec).
+- Ein Spieler kann alle Positionen, der anderen Detektive, live auf der KArte sehen. 
+- Der Standort des Banditens wird alle x Secunden anzeigt auf der KArte. 
+    - Der letzte beaknnte Standort des Banditen wird auf der Karte angezeigt. 
+- Beim Auslösen einer Fähigkeit werden die Detektive Benachrichtigt
+- Spieler haben die Möglichkeit den Banditen als gefunden zu markieren. Dadurch ist das Spiel beendet
+
+
 # Wunschkriterien
+- Detektive können Punkte setzen, wo der Detektive Vermutet wird. Der Bandit kann die Punkte nicht sehen. 
+- Zu jedem Spiel gibt es einen Chat zum Kommunizieren
+    - ein Chat mit Bandit 
+    - ein Chat ohne Bandit
+- Spielmodi (optional):
+    - automatisch Wechsel von Detektiv zu Bandit. Der Detektiv der den Banditen gefasst hat, wird autmatisch zum neuen Banditen
+    
