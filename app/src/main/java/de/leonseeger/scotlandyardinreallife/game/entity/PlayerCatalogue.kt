@@ -9,7 +9,7 @@ interface PlayerCatalogue {
     suspend fun removePlayerFromGame(gameId: String, playerId: String): Result<Unit>
 
     fun getPlayer(gameId: String, playerId: String): Flow<Player?>
-    fun getPlayersInGame(gameId: String): Flow<List<Player?>>
+    fun getPlayersInGame(gameId: String): Flow<List<Player>?>
     fun observePlayerLocations(gameId: String): Flow<Map<Player, String>>
 
 
