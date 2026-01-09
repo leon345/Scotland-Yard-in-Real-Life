@@ -29,7 +29,7 @@ build_app:
     - glab auth login --job-token $CI_JOB_TOKEN --hostname $CI_SERVER_FQDN --api-protocol $CI_SERVER_PROTOCOL
     - glab -R $CI_PROJECT_PATH securefile download --all --output-dir=".secure_files"
     
-    # Dateien anzeigen
+    # Dateien anzeigenn
     
     # Set Firebase credentials
     - export GOOGLE_APPLICATION_CREDENTIALS=$CI_PROJECT_DIR/.secure_files/hsosscotland-yard-in-real-life-5e57c9c20b33.json
