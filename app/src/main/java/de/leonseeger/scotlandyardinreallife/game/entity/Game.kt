@@ -4,7 +4,8 @@ data class Game(
     val id: String,
     val createdAt: Long,
     val status: GameStatus,
-    val polygon: Polygon,
+    //TODO @jannes implemtierung des Spielfeldes
+    //val polygon: Polygon,
     val players: List<Player>,
     val owner: Player
 ) {
