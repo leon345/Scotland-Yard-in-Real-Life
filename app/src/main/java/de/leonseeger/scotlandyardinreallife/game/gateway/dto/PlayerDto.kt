@@ -16,6 +16,7 @@ data class PlayerDto(
         role = try {
             PlayerRole.valueOf(role)
         } catch (e: IllegalArgumentException) {
+            Log.e("PlayerDto", "Invalid PlayerRole: $role", e)
             PlayerRole.DETECTIVE
         }
     )

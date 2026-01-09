@@ -1,5 +1,6 @@
 package de.leonseeger.scotlandyardinreallife.game.gateway.dto
 
+import android.util.Log
 import de.leonseeger.scotlandyardinreallife.game.entity.Game
 import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
 
@@ -18,6 +19,7 @@ data class GameDto(
         status = try {
             GameStatus.valueOf(this.status)
         } catch (e: IllegalArgumentException) {
+            Log.e("GameDto", "Invalid GameStatus: $status", e)
             GameStatus.WAITING
         },
         players = players.map { it.toEntity() },
