@@ -74,6 +74,8 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.database)
+    implementation("com.github.mapsforge.mapsforge:mapsforge-map-android:0.27.0@jar")
+    implementation("com.caverock:androidsvg:1.4")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
