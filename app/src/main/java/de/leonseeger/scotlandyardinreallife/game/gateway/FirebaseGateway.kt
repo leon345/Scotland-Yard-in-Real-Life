@@ -1,0 +1,181 @@
+package de.leonseeger.scotlandyardinreallife.game.gateway
+
+import android.location.Location
+import android.util.Log
+import androidx.compose.runtime.snapshotFlow
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import de.leonseeger.scotlandyardinreallife.game.entity.Game
+import de.leonseeger.scotlandyardinreallife.game.entity.GameCatalogue
+import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
+import de.leonseeger.scotlandyardinreallife.game.entity.Player
+import de.leonseeger.scotlandyardinreallife.game.entity.PlayerCatalogue
+import de.leonseeger.scotlandyardinreallife.game.gateway.dto.GameDto
+import de.leonseeger.scotlandyardinreallife.game.gateway.dto.toDto
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
+
+class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogue, GameCatalogue {
+    private val gamesCollection = firestore.collection("games")
+
+    override suspend fun addPlayerToGame(
+        gameId: String, playerId: String
+    ): Result<Unit> = try {
+        gamesCollection.document(gameId).update("players", FieldValue.arrayUnion(playerId)).await()
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Log.e("FirebaseGateway", "Failed to add player to game", e)
+        Result.failure(e)
+    }
+
+    override suspend fun updatePlayer(
+        gameId: String, player: Player
+    ): Result<Unit> = try {
+        val playerDto = player.toDto()
+        gamesCollection.document(gameId).update("players", FieldValue.arrayUnion(playerDto)).await()
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Log.e("FirebaseGateway", "Failed to update player", e)
+        Result.failure(e)
+    }
+
+    override suspend fun removePlayerFromGame(
+        gameId: String, playerId: String
+    ): Result<Unit> = try {
+        gamesCollection.document(gameId).update("players", FieldValue.arrayRemove(playerId)).await()
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Log.e("FirebaseGateway", "Failed to remove player from game", e)
+        Result.failure(e)
+    }
+
+    override fun getPlayer(
+        gameId: String, playerId: String
+    ): Flow<Player?> = callbackFlow {
+        val listener = gamesCollection.document(gameId).addSnapshotListener { snapshotFlow, error ->
+            if (error != null) {
+                Log.e("FirebaseGateway", "Failed to get player", error)
+                close(error)
+                return@addSnapshotListener
+            }
+            val gameDto = snapshotFlow?.toObject(GameDto::class.java)
+            val game = gameDto?.toEntity()
+            val player = game?.players?.find { it.id == playerId }
+            trySend(player)
+        }
+        awaitClose {
+            listener.remove()
+        }
+
+
+
+    }
+
+    override fun getPlayersInGame(gameId: String): Flow<List<Player>?> = callbackFlow {
+        val listener = gamesCollection.document(gameId).addSnapshotListener { snapshotFlow, error ->
+            if (error != null) {
+                Log.e("FirebaseGateway", "Failed to get players", error)
+                close(error)
+                return@addSnapshotListener
+            }
+            val gameDto = snapshotFlow?.toObject(GameDto::class.java)
+            val game = gameDto?.toEntity()
+            val players = game?.players
+            trySend(players)
+        }
+        awaitClose { listener.remove() }
+
+    }
+
+    override fun observePlayerLocations(gameId: String): Flow<Map<Player, String>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updatePlayerLocation(
+        gameId: String, playerId: String, location: Location
+    ): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun createGame(game: Game): Result<String> = try {
+        val docRef = gamesCollection.document()
+        val gameWithId = game.copy(id = docRef.id)
+        val gameDto = gameWithId.toDto()
+        docRef.set(gameDto).await()
+        Result.success(docRef.id)
+    } catch (e: Exception) {
+        Log.e("FirebaseGateway", "Failed to create game", e)
+        Result.failure(e)
+
+    }
+
+    override fun getGameById(gameId: String): Flow<Game?> = callbackFlow {
+        val listener = gamesCollection.document(gameId).addSnapshotListener { snapshotFlow, error ->
+            if (error != null) {
+                Log.e("FirebaseGateway", "Failed to get game", error)
+                close(error)
+                return@addSnapshotListener
+            }
+            val gameDto = snapshotFlow?.toObject(GameDto::class.java)
+            val game = gameDto?.toEntity()
+            trySend(game)
+        }
+        awaitClose {
+            listener.remove()
+        }
+    }
+
+    override suspend fun updateGame(game: Game): Result<Unit> = try {
+        val gameDto = game.toDto()
+        gamesCollection.document(game.id).set(gameDto).await()
+        Log.d("FirebaseGateway", "Game updated: $game")
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Log.e("FirebaseGateway", "Failed to update game", e)
+        Result.failure(e)
+    }
+
+    override suspend fun deleteGame(gameId: String): Result<Unit> = try {
+        gamesCollection.document(gameId).delete().await()
+        Log.d("FirebaseGateway", "Game deleted: $gameId")
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Log.e("FirebaseGateway", "Failed to delete game", e)
+        Result.failure(e)
+    }
+
+    override fun getGamesByStatus(status: GameStatus): Flow<List<Game>> = callbackFlow {
+        val listener = gamesCollection.whereEqualTo("status", status.name)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("FirebaseGateway", "Error observing games with status $status", error)
+                    close(error)
+                    return@addSnapshotListener
+                }
+                val games =
+                    snapshot?.documents?.mapNotNull { it.toObject(GameDto::class.java)?.toEntity() }
+                        ?: emptyList()
+                trySend(games)
+            }
+        awaitClose {
+            listener.remove()
+        }
+    }
+
+    override fun observeActiveGame(): Flow<Game> = callbackFlow {
+        //TODO das aktuelle teilnehmende game. Wodrinnen man ist
+    }
+
+    override suspend fun updateGameStatus(
+        gameId: String, status: GameStatus
+    ): Result<Unit> = try {
+        gamesCollection.document(gameId).update("status", status.name).await()
+        Result.success(Unit)
+
+    } catch (e: Exception) {
+        Log.e("FirebaseGateway", "Failed to update game status", e)
+        Result.failure(e)
+    }
+}
