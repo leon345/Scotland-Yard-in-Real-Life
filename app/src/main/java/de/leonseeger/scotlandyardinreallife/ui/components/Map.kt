@@ -1,4 +1,4 @@
-package de.leonseeger.scotlandyardinreallife.ui.theme.components
+package de.leonseeger.scotlandyardinreallife.ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
