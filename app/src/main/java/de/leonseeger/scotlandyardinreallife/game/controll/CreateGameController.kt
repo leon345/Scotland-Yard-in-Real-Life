@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CreateGameController(
     private val gameCatalogue: GameCatalogue, private val playerCatalogue: PlayerCatalogue
@@ -35,25 +36,29 @@ class CreateGameController(
         controllerScope.launch {
             _isLoading.value = true
             _error.value = null
-        }
 
-        val owner = Player(
-            id = ownerId, currentLocation = null, role = PlayerRole.DETECTIVE
-        )
 
-        val newGame = Game(
-            id = "",
-            createdAt = System.currentTimeMillis(),
-            status = GameStatus.WAITING,
-            players = listOf(owner),
-            owner = owner
-        )
-        gameCatalogue.createGame(newGame).onSuccess { gameId ->
-            _isLoading.value = false
-            observeGame(gameId)
-        }.onFailure { e ->
-            _error.value = "Fehler beim Erstellen des Spiels: ${e.message}"
-            _isLoading.value = false
+            val owner = Player(
+                id = ownerId, currentLocation = null, role = PlayerRole.DETECTIVE
+            )
+
+            val newGame = Game(
+                id = "",
+                createdAt = System.currentTimeMillis(),
+                status = GameStatus.WAITING,
+                players = listOf(owner),
+                owner = owner
+            )
+            val result = withContext(Dispatchers.IO) {
+                gameCatalogue.createGame(newGame)
+            }
+            result.onSuccess { gameId ->
+                _isLoading.value = false
+                observeGame(gameId)
+            }.onFailure { e ->
+                _error.value = "Fehler beim Erstellen des Spiels: ${e.message}"
+                _isLoading.value = false
+            }
         }
     }
 
@@ -70,8 +75,10 @@ class CreateGameController(
                     _error.value = "Mindestens 2 Spieler erforderlich"
                     return@launch
                 }
-
-                gameCatalogue.updateGameStatus(game.id, GameStatus.RUNNING).onFailure { exception ->
+                val result = withContext(Dispatchers.IO) {
+                    gameCatalogue.updateGameStatus(game.id, GameStatus.RUNNING)
+                }
+                result.onFailure { exception ->
                     _error.value = "Fehler beim Starten des Spiels: ${exception.message}"
                 }
             }
@@ -81,7 +88,10 @@ class CreateGameController(
     fun addPlayer(playerId: String) {
         controllerScope.launch {
             _gameState.value?.let { game ->
-                playerCatalogue.addPlayerToGame(game.id, playerId).onFailure { exception ->
+                val result = withContext(Dispatchers.IO) {
+                    playerCatalogue.addPlayerToGame(game.id, playerId)
+                }
+                result.onFailure { exception ->
                     _error.value = "Fehler beim Hinzufügen des Spielers: ${exception.message}"
                 }
 
@@ -92,7 +102,10 @@ class CreateGameController(
     fun deleteGame() {
         controllerScope.launch {
             _gameState.value?.let { game ->
-                gameCatalogue.deleteGame(game.id).onFailure { exception ->
+                val result = withContext(Dispatchers.IO) {
+                    gameCatalogue.deleteGame(game.id)
+                }
+                result.onFailure { exception ->
                     _error.value = "Fehler beim Löschen des Spiels: ${exception.message}"
                 }
             }
