@@ -40,6 +40,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         signingConfig = signingConfigs.getByName("release")
+
+        val MAPTILER_API_KEY: String by project
+        buildConfigField( "String", "MAPTILER_API_KEY", "\"$MAPTILER_API_KEY\"")
     }
 
     buildTypes {
@@ -60,6 +63,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

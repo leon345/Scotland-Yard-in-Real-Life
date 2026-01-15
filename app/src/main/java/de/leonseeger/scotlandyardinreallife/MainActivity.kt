@@ -11,20 +11,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import de.leonseeger.scotlandyardinreallife.ui.components.CustomMap
 import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
+import org.maplibre.android.MapLibre
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        val key = BuildConfig.MAPTILER_API_KEY
+        val mapId = "landscape-v4"
+        val styleUrl = "https://api.maptiler.com/maps/$mapId/style.json?key=$key"
+        MapLibre.getInstance(this)
+
         enableEdgeToEdge()
         setContent {
             ScotlandYardInRealLifeTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Hi Lokal",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                CustomMap(modifier = Modifier.fillMaxSize(),
+                    styleUrl = styleUrl
+                )
             }
         }
     }
