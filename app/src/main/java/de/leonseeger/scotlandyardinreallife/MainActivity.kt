@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
 
         val key = BuildConfig.MAPTILER_API_KEY
         val mapId = "landscape-v4"
-        val styleUrl = "https://api.maptiler.com/maps/$mapId/style.json?key=$key"
+        val styleUrl = "https://tiles.openfreemap.org/styles/liberty"
         MapLibre.getInstance(this)
 
         enableEdgeToEdge()
