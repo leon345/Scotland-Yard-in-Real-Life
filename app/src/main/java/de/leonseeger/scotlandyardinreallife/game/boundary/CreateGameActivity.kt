@@ -36,10 +36,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.google.firebase.firestore.FirebaseFirestore
+import de.leonseeger.scotlandyardinreallife.R
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameController
 import de.leonseeger.scotlandyardinreallife.game.entity.Player
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
@@ -108,7 +110,7 @@ fun CreateGameScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Spiel erstellen",
+            text = stringResource(R.string.create_game_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
         )
@@ -126,7 +128,7 @@ fun CreateGameScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Teilnehemende Spieler (${players.size})",
+                    text = stringResource(R.string.participating_players, players.size),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -136,7 +138,7 @@ fun CreateGameScreen(
                 )
 
                 PrimaryButton(
-                    text = "Spiel starten", onClick = {
+                    text = stringResource(R.string.start_game), onClick = {
                         controller.startGame()
                         onStartGame()
                     }, enabled = players.size >= 2, icon = Icons.Default.PlayArrow
@@ -144,7 +146,7 @@ fun CreateGameScreen(
 
                 if (players.size < 2) {
                     Text(
-                        text = "Mindestens 2 Spieler erforderlich",
+                        text = stringResource(R.string.minimum_players_required),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                         textAlign = TextAlign.Center,
@@ -172,7 +174,7 @@ fun InvitationCodeCard(gameId: String) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Einladungscode",
+                text = stringResource(R.string.invitation_code),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -185,7 +187,7 @@ fun InvitationCodeCard(gameId: String) {
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Teile diesen Code mit anderen Spielern",
+                text = stringResource(R.string.share_code_message),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 textAlign = TextAlign.Center
@@ -211,7 +213,7 @@ fun PlayersList(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Warte auf Spieler...",
+                    text = stringResource(R.string.waiting_for_players),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -265,7 +267,7 @@ fun PlayerItem(player: Player, isOwner: Boolean) {
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Spieler ${player.id.take(6)}",
+                    text = stringResource(R.string.player_id, player.id.take(6)),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium
                 )
