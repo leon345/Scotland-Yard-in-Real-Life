@@ -45,7 +45,12 @@ import de.leonseeger.scotlandyardinreallife.R
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameController
 import de.leonseeger.scotlandyardinreallife.game.entity.Player
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
+import de.leonseeger.scotlandyardinreallife.ui.component.BodyText
+import de.leonseeger.scotlandyardinreallife.ui.component.ErrorText
+import de.leonseeger.scotlandyardinreallife.ui.component.LabelText
 import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
+import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle
+import de.leonseeger.scotlandyardinreallife.ui.component.SubheadingText
 import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
 
 class CreateGameActivity : ComponentActivity() {
@@ -109,10 +114,8 @@ fun CreateGameScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = stringResource(R.string.create_game_title),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
+        SectionTitle(
+            text = stringResource(R.string.create_game_title)
         )
         if (isLoading) {
             Box(
@@ -127,10 +130,8 @@ fun CreateGameScreen(
                 InvitationCodeCard(gameId = game.id)
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = stringResource(R.string.participating_players, players.size),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold
+                SubheadingText(
+                    text = stringResource(R.string.participating_players, players.size)
                 )
 
                 PlayersList(
@@ -145,12 +146,8 @@ fun CreateGameScreen(
                 )
 
                 if (players.size < 2) {
-                    Text(
-                        text = stringResource(R.string.minimum_players_required),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
+                    ErrorText(
+                        text = stringResource(R.string.minimum_players_required)
                     )
                 }
 
@@ -173,9 +170,8 @@ fun InvitationCodeCard(gameId: String) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
+            LabelText(
                 text = stringResource(R.string.invitation_code),
-                style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -266,14 +262,13 @@ fun PlayerItem(player: Player, isOwner: Boolean) {
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(
+                BodyText(
                     text = stringResource(R.string.player_id, player.id.take(6)),
-                    style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium
                 )
-                Text(
+
+                BodyText(
                     text = player.role.toString(),
-                    style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium
                 )
                 if (isOwner) {

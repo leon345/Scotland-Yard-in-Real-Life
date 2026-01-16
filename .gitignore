@@ -15,3 +15,5 @@
 local.properties
 /.secure_files
 
+/app/debug/*
+/app/release/*
