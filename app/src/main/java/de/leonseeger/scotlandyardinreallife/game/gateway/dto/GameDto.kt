@@ -11,7 +11,8 @@ data class GameDto(
     //TODO @jannes implemtierung des Spielfeldes
     //val polygon: PolygonDto? = null,
     val players: List<PlayerDto> = emptyList(),
-    val owner: PlayerDto? = null
+    val owner: PlayerDto? = null,
+    val counter: Int
 ) {
     fun toEntity(): Game = Game(
         id = id,
@@ -23,7 +24,8 @@ data class GameDto(
             GameStatus.WAITING
         },
         players = players.map { it.toEntity() },
-        owner = owner?.toEntity() ?: throw IllegalArgumentException("Owner cannot be null")
+        owner = owner?.toEntity() ?: throw IllegalArgumentException("Owner cannot be null"),
+        counter = counter
     )
 
 }
@@ -33,5 +35,6 @@ fun Game.toDto(): GameDto = GameDto(
     createdAt = createdAt,
     status = status.name,
     players = players.map { it.toDto() },
-    owner = owner.toDto()
+    owner = owner.toDto(),
+    counter = counter
 )

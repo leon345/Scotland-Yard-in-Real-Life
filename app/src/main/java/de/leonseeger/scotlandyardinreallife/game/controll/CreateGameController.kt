@@ -85,11 +85,11 @@ class CreateGameController(
         }
     }
 
-    fun addPlayer(playerId: String) {
+    fun addPlayer(player: Player) {
         controllerScope.launch {
             _gameState.value?.let { game ->
                 val result = withContext(Dispatchers.IO) {
-                    playerCatalogue.addPlayerToGame(game.id, playerId)
+                    playerCatalogue.addPlayerToGame(game.id, player)
                 }
                 result.onFailure { exception ->
                     _error.value = "Fehler beim Hinzufügen des Spielers: ${exception.message}"
