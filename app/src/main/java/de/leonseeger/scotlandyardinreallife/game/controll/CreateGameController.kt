@@ -19,7 +19,7 @@ class CreateGameController(
     private val gameCatalogue: GameCatalogue, private val playerCatalogue: PlayerCatalogue
 ) {
     private val controllerScope =
-        CoroutineScope(SupervisorJob() + Dispatchers.Main) // TODO Was macht dies Zeile
+        CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private val _gameState = MutableStateFlow<Game?>(null)
     val gamestate: StateFlow<Game?> = _gameState.asStateFlow()
 
