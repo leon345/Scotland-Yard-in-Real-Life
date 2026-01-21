@@ -60,6 +60,28 @@ class CreateGameViewModel(
         }
     }
 
+    fun joinGame(gameId: String, playerId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            val player = Player(
+                id = playerId, currentLocation = null, role = PlayerRole.DETECTIVE
+            )
+            val result = withContext(Dispatchers.IO) {
+                playerCatalogue.addPlayerToGame(gameId, player)
+            }
+            result.onSuccess {
+                _isLoading.value = false
+                observeGame(gameId)
+            }.onFailure { e ->
+                _error.value = "Fehler beim Beitreten: ${e.message}"
+                _isLoading.value = false
+            }
+
+        }
+
+    }
+
     fun observeGame(gameId: String) {
         viewModelScope.launch {
             gameCatalogue.getGameById(gameId).collect { game -> _gameState.value = game }

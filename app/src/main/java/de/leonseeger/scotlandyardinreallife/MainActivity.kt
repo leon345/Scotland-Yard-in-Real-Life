@@ -55,6 +55,18 @@ fun MainScreen(modifier: Modifier = Modifier) {
             text = "Spiel erstellen",
             onClick = {
                 val intent = Intent(context, CreateGameActivity::class.java)
+                intent.putExtra("MODE", "CREATE")
+                context.startActivity(intent)
+            },
+            icon = Icons.Default.Add,
+            modifier = Modifier.padding(top = 24.dp)
+        )
+        PrimaryButton(
+            text = "Spiel beitreten",
+            onClick = {
+                val intent = Intent(context, CreateGameActivity::class.java)
+                intent.putExtra("MODE", "JOIN")
+                intent.putExtra("GAME_ID", "ImFBs8UXC5xxOxeXO4ap")
                 context.startActivity(intent)
             },
             icon = Icons.Default.Add,
