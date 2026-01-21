@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +30,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-        val key = BuildConfig.MAPTILER_API_KEY
         val mapId = "landscape-v4"
         val styleUrl = "https://tiles.openfreemap.org/styles/liberty"
         MapLibre.getInstance(this)
@@ -39,13 +38,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             ScotlandYardInRealLifeTheme {
                 CustomMap(modifier = Modifier.fillMaxSize(),
-                    styleUrl = styleUrl
+                    styleUrl = styleUrl, lat = 52.2720, lon = 8.0482,
+                    appContext = this
                 )
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                /*Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     MainScreen(
                         modifier = Modifier.padding(innerPadding)
                     )
-                }
+                }*/
             }
         }
     }

@@ -41,8 +41,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         signingConfig = signingConfigs.getByName("release")
 
-        val MAPTILER_API_KEY: String by project
-        buildConfigField( "String", "MAPTILER_API_KEY", "\"$MAPTILER_API_KEY\"")
+        val MAPTILER_API_PATH: String by project
+        buildConfigField("String", "MAPTILER_API_PATH", "\"$MAPTILER_API_PATH\"")
     }
 
     buildTypes {
@@ -52,6 +52,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
         }
     }
     compileOptions {
