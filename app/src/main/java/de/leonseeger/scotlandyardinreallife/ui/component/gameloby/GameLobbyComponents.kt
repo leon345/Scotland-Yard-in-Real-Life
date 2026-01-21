@@ -1,5 +1,6 @@
 package de.leonseeger.scotlandyardinreallife.ui.component.gameloby
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,7 +55,7 @@ fun InvitationCodeCard(gameId: String) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = gameId.uppercase(),
+                text = gameId,
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -72,7 +73,10 @@ fun InvitationCodeCard(gameId: String) {
 
 @Composable
 fun PlayersList(
-    players: List<Player>, ownerId: String, modifier: Modifier = Modifier
+    players: List<Player>,
+    ownerId: String,
+    modifier: Modifier = Modifier,
+    onPlayerClick: (String) -> Unit = {}
 ) {
     Card(
         modifier = modifier.fillMaxWidth(), colors = CardDefaults.cardColors(
@@ -103,7 +107,9 @@ fun PlayersList(
 
                 ) { players ->
                     PlayerItem(
-                        player = players, isOwner = players.id == ownerId
+                        player = players,
+                        isOwner = players.id == ownerId,
+                        onClick = { onPlayerClick(players.id) }
 
                     )
 
@@ -114,9 +120,12 @@ fun PlayersList(
 }
 
 @Composable
-fun PlayerItem(player: Player, isOwner: Boolean) {
+fun PlayerItem(player: Player, isOwner: Boolean, onClick: () -> Unit = {}) {
     Card(
-        modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(
             containerColor = if (isOwner) {
                 MaterialTheme.colorScheme.tertiaryContainer
             } else {

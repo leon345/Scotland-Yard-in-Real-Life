@@ -84,7 +84,12 @@ class CreateGameViewModel(
 
     fun observeGame(gameId: String) {
         viewModelScope.launch {
-            gameCatalogue.getGameById(gameId).collect { game -> _gameState.value = game }
+            gameCatalogue.getGameById(gameId).collect { game ->
+                _gameState.value = game
+                if (game == null) {
+                    _error.value = "Spiel wurde nicht gefunden"
+                }
+            }
         }
 
         viewModelScope.launch {
@@ -135,6 +140,23 @@ class CreateGameViewModel(
                 result.onFailure { exception ->
                     _error.value = "Fehler beim Löschen des Spiels: ${exception.message}"
                 }
+            }
+        }
+    }
+
+    fun togglePlayerRole(playerId: String) {
+        viewModelScope.launch {
+            val gameId = _gameState.value?.id ?: return@launch
+            val player = _players.value.find { it.id == playerId } ?: return@launch
+
+            val updatedPlayer = player.copy(role = player.role.toggle())
+
+            val result = withContext(Dispatchers.IO) {
+                playerCatalogue.updatePlayer(gameId, updatedPlayer)
+            }
+
+            result.onFailure { exception ->
+                _error.value = "Fehler beim Ändern der Rolle: ${exception.message}"
             }
         }
     }

@@ -1,4 +1,4 @@
-package de.leonseeger.scotlandyardinreallife.ui.component.gameloby
+package de.leonseeger.scotlandyardinreallife.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,25 +25,27 @@ import de.leonseeger.scotlandyardinreallife.ui.component.ErrorText
 import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
 import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle
 import de.leonseeger.scotlandyardinreallife.ui.component.SubheadingText
+import de.leonseeger.scotlandyardinreallife.ui.component.gameloby.InvitationCodeCard
+import de.leonseeger.scotlandyardinreallife.ui.component.gameloby.PlayersList
 
 @Composable
 fun GameLobbyScreen(
-    controller: CreateGameViewModel,
+    viewModel: CreateGameViewModel,
     gameId: String?,
     mode: String?,
     playerId: String,
     modifier: Modifier = Modifier,
     onStartGame: () -> Unit = {}
 ) {
-    val gameState by controller.gamestate.collectAsState()
-    val players by controller.players.collectAsState()
-    val isLoading by controller.isLoading.collectAsState()
-    val error by controller.error.collectAsState()
+    val gameState by viewModel.gamestate.collectAsState()
+    val players by viewModel.players.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
 
-    LaunchedEffect(gameId) {
+    LaunchedEffect(gameId, mode) {
         when (mode) {
-            "CREATE" -> controller.createGame(playerId)
-            "JOIN" -> gameId?.let { controller.joinGame(it, playerId) }
+            "CREATE" -> viewModel.createGame(playerId)
+            "JOIN" -> gameId?.let { viewModel.joinGame(it, playerId) }
         }
     }
 
@@ -74,12 +76,17 @@ fun GameLobbyScreen(
                 )
 
                 PlayersList(
-                    players = players, ownerId = game.owner.id, modifier = Modifier.weight(1f)
+                    players = players,
+                    ownerId = game.owner.id,
+                    modifier = Modifier.weight(1f),
+                    onPlayerClick = { clickedPlayerId ->
+                        viewModel.togglePlayerRole(clickedPlayerId)
+                    }
                 )
 
                 PrimaryButton(
                     text = stringResource(R.string.start_game), onClick = {
-                        controller.startGame()
+                        viewModel.startGame()
                         onStartGame()
                     }, enabled = players.size >= 2, icon = Icons.Default.PlayArrow
                 )
