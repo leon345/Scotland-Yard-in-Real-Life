@@ -1,25 +1,23 @@
 package de.leonseeger.scotlandyardinreallife.game.controll
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import de.leonseeger.scotlandyardinreallife.game.entity.Game
 import de.leonseeger.scotlandyardinreallife.game.entity.GameCatalogue
 import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.game.entity.Player
 import de.leonseeger.scotlandyardinreallife.game.entity.PlayerCatalogue
 import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CreateGameController(
+class CreateGameViewModel(
     private val gameCatalogue: GameCatalogue, private val playerCatalogue: PlayerCatalogue
-) {
-    private val controllerScope =
-        CoroutineScope(SupervisorJob() + Dispatchers.Main)
+) : ViewModel() {
     private val _gameState = MutableStateFlow<Game?>(null)
     val gamestate: StateFlow<Game?> = _gameState.asStateFlow()
 
@@ -33,7 +31,7 @@ class CreateGameController(
     val error: StateFlow<String?> = _error.asStateFlow()
 
     fun createGame(ownerId: String) {
-        controllerScope.launch {
+        viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
 
@@ -62,14 +60,48 @@ class CreateGameController(
         }
     }
 
-    fun observeGame(gameId: String) {
-        controllerScope.launch {
-            gameCatalogue.getGameById(gameId).collect { game -> _gameState.value = game }
+    fun joinGame(gameId: String, playerId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            val player = Player(
+                id = playerId, currentLocation = null, role = PlayerRole.DETECTIVE
+            )
+            val result = withContext(Dispatchers.IO) {
+                playerCatalogue.addPlayerToGame(gameId, player)
+            }
+            result.onSuccess {
+                _isLoading.value = false
+                observeGame(gameId)
+            }.onFailure { e ->
+                _error.value = "Fehler beim Beitreten: ${e.message}"
+                _isLoading.value = false
+            }
+
         }
+
+    }
+
+    fun observeGame(gameId: String) {
+        viewModelScope.launch {
+            gameCatalogue.getGameById(gameId).collect { game ->
+                _gameState.value = game
+                if (game == null) {
+                    _error.value = "Spiel wurde nicht gefunden"
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            playerCatalogue.getPlayersInGame(gameId).collect { players ->
+                _players.value = players ?: emptyList()
+            }
+        }
+
     }
 
     fun startGame() {
-        controllerScope.launch {
+        viewModelScope.launch {
             _gameState.value?.let { game ->
                 if (game.players.size < 2) {
                     _error.value = "Mindestens 2 Spieler erforderlich"
@@ -85,11 +117,11 @@ class CreateGameController(
         }
     }
 
-    fun addPlayer(playerId: String) {
-        controllerScope.launch {
+    fun addPlayer(player: Player) {
+        viewModelScope.launch {
             _gameState.value?.let { game ->
                 val result = withContext(Dispatchers.IO) {
-                    playerCatalogue.addPlayerToGame(game.id, playerId)
+                    playerCatalogue.addPlayerToGame(game.id, player)
                 }
                 result.onFailure { exception ->
                     _error.value = "Fehler beim Hinzufügen des Spielers: ${exception.message}"
@@ -100,7 +132,7 @@ class CreateGameController(
     }
 
     fun deleteGame() {
-        controllerScope.launch {
+        viewModelScope.launch {
             _gameState.value?.let { game ->
                 val result = withContext(Dispatchers.IO) {
                     gameCatalogue.deleteGame(game.id)
@@ -108,6 +140,23 @@ class CreateGameController(
                 result.onFailure { exception ->
                     _error.value = "Fehler beim Löschen des Spiels: ${exception.message}"
                 }
+            }
+        }
+    }
+
+    fun togglePlayerRole(playerId: String) {
+        viewModelScope.launch {
+            val gameId = _gameState.value?.id ?: return@launch
+            val player = _players.value.find { it.id == playerId } ?: return@launch
+
+            val updatedPlayer = player.copy(role = player.role.toggle())
+
+            val result = withContext(Dispatchers.IO) {
+                playerCatalogue.updatePlayer(gameId, updatedPlayer)
+            }
+
+            result.onFailure { exception ->
+                _error.value = "Fehler beim Ändern der Rolle: ${exception.message}"
             }
         }
     }

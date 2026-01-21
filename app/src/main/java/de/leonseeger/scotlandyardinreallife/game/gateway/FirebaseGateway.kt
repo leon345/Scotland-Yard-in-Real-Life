@@ -2,7 +2,6 @@ package de.leonseeger.scotlandyardinreallife.game.gateway
 
 import android.location.Location
 import android.util.Log
-import androidx.compose.runtime.snapshotFlow
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.game.entity.Game
@@ -21,9 +20,24 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
     private val gamesCollection = firestore.collection("games")
 
     override suspend fun addPlayerToGame(
-        gameId: String, playerId: String
+        gameId: String, player: Player
     ): Result<Unit> = try {
-        gamesCollection.document(gameId).update("players", FieldValue.arrayUnion(playerId)).await()
+        val gameRef = gamesCollection.document(gameId);
+        Log.d("FirebaseGateway", "Adding player to game with ID $gameId: $player")
+        firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(gameRef)
+            val currentCounter = snapshot.getLong("counter") ?: 0
+            val newPlayerId = (currentCounter + 1).toString()
+
+            val playerWithId = player.copy(id = newPlayerId)
+            val playerDto = playerWithId.toDto()
+
+            transaction.update(gameRef, "counter", currentCounter + 1)
+            transaction.update(gameRef, "players", FieldValue.arrayUnion(playerDto))
+
+            Unit
+
+        }.await()
         Result.success(Unit)
     } catch (e: Exception) {
         Log.e("FirebaseGateway", "Failed to add player to game", e)
@@ -33,8 +47,18 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
     override suspend fun updatePlayer(
         gameId: String, player: Player
     ): Result<Unit> = try {
-        val playerDto = player.toDto()
-        gamesCollection.document(gameId).update("players", FieldValue.arrayUnion(playerDto)).await()
+        val gameRef = gamesCollection.document(gameId)
+        firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(gameRef)
+            val gameDto = snapshot.toObject(GameDto::class.java)
+                ?: throw IllegalStateException("Game not found")
+            val currentPlayers = gameDto.toEntity()?.players ?: emptyList()
+            val updatedPlayers = currentPlayers.map { existingPlayer ->
+                if (existingPlayer.id == player.id) player else existingPlayer
+            }
+            val updatedPlayerDtos = updatedPlayers.map { it.toDto() }
+            transaction.update(gameRef, "players", updatedPlayerDtos)
+        }.await()
         Result.success(Unit)
     } catch (e: Exception) {
         Log.e("FirebaseGateway", "Failed to update player", e)
@@ -68,7 +92,6 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
         awaitClose {
             listener.remove()
         }
-
 
 
     }

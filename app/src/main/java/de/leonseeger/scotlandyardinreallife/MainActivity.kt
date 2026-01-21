@@ -1,36 +1,50 @@
 package de.leonseeger.scotlandyardinreallife
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import de.leonseeger.scotlandyardinreallife.game.boundary.CreateGameActivity
-import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.google.firebase.firestore.FirebaseFirestore
+import de.leonseeger.scotlandyardinreallife.game.CreateGameViewModelFactory
+import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
+import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
+import de.leonseeger.scotlandyardinreallife.ui.screens.GameLobbyScreen
+import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
+import de.leonseeger.scotlandyardinreallife.ui.screens.JoinGameScreen
 import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
 
 class MainActivity : ComponentActivity() {
+    private val firebaseGateway = FirebaseGateway(FirebaseFirestore.getInstance())
+    private val gameLobbyViewModel: CreateGameViewModel by viewModels {
+        CreateGameViewModelFactory(
+            gameCatalogue = firebaseGateway, playerCatalogue = firebaseGateway
+        )
+    }
+    private lateinit var navController: NavHostController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             ScotlandYardInRealLifeTheme {
+                navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen(
+                    AppNavigation(
+                        navController = navController,
+                        viewModel = gameLobbyViewModel,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -39,35 +53,69 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    Column(
+fun AppNavigation(
+    navController: NavHostController,
+    viewModel: CreateGameViewModel,
+    modifier: Modifier = Modifier
+) {
+    NavHost(
+        navController = navController,
+        startDestination = NavigationRoutes.HOME,
         modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Scotland Yard in Real Life")
+        composable(NavigationRoutes.HOME) {
+            HomeScreen(
+                onCreateGame = {
+                    navController.navigate(
+                        NavigationRoutes.gameLobby(mode = "CREATE")
+                    )
+                },
+                onJoinGame = {
+                    navController.navigate(NavigationRoutes.JOIN_GAME)
+                }
+            )
+        }
 
-        PrimaryButton(
-            text = "Spiel erstellen",
-            onClick = {
-                val intent = Intent(context, CreateGameActivity::class.java)
-                context.startActivity(intent)
-            },
-            icon = Icons.Default.Add,
-            modifier = Modifier.padding(top = 24.dp)
-        )
-    }
-}
+
+        composable(NavigationRoutes.JOIN_GAME) {
+            JoinGameScreen(
+                onJoinWithCode = { gameCode ->
+                    navController.navigate(
+                        NavigationRoutes.gameLobby(mode = "JOIN", gameCode = gameCode)
+                    )
+                }
+            )
+        }
 
 
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    ScotlandYardInRealLifeTheme {
-        MainScreen()
+        composable(
+            route = NavigationRoutes.GAME_LOBBY,
+            arguments = listOf(
+                navArgument("mode") {
+                    type = NavType.StringType
+                },
+                navArgument("gameCode") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) { backStackEntry ->
+            val mode = backStackEntry.arguments?.getString("mode") ?: "CREATE"
+            val gameCode = backStackEntry.arguments?.getString("gameCode")
+            val playerId = "user_${System.currentTimeMillis()}"
+
+            GameLobbyScreen(
+                viewModel = viewModel,
+                mode = mode,
+                gameId = if (gameCode.isNullOrEmpty()) null else gameCode,
+                playerId = playerId,
+                onStartGame = {
+                    // TODO: Navigation zum aktiven Game Screen
+                    navController.popBackStack(NavigationRoutes.HOME, inclusive = false)
+                }
+            )
+        }
     }
 }

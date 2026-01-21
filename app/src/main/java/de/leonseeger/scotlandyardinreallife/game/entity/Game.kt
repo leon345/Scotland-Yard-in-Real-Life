@@ -7,7 +7,8 @@ data class Game(
     //TODO @jannes implemtierung des Spielfeldes
     //val polygon: Polygon,
     val players: List<Player>,
-    val owner: Player
+    val owner: Player,
+    val counter: Int = 0
 ) {
 
 
