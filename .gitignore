@@ -15,6 +15,5 @@
 local.properties
 /.secure_files
 
-/app/google-services.json
-/.idea/codeStyles/codeStyleConfig.xml
-/.idea/codeStyles/Project.xml
+/app/debug/*
+/app/release/*

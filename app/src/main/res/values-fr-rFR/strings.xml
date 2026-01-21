@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Scotland Yard in Real Life</string>
+
+    <!-- CreateGameActivity -->
+    <string name="create_game_title">Créer une partie</string>
+    <string name="participating_players">Joueurs participants (%1$d)</string>
+    <string name="start_game">Démarrer la partie</string>
+    <string name="minimum_players_required">Au moins 2 joueurs requis</string>
+
+    <!-- Invitation Code Card -->
+    <string name="invitation_code">Code d\'invitation</string>
+    <string name="share_code_message">Partagez ce code avec d\'autres joueurs</string>
+
+    <!-- Players List -->
+    <string name="waiting_for_players">En attente de joueurs…</string>
+    <string name="player_id">Joueur %1$s</string>
+    <string name="host">Hôte</string>
+</resources>
