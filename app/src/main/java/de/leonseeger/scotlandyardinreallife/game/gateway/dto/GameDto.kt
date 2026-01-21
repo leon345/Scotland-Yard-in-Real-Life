@@ -12,7 +12,7 @@ data class GameDto(
     //val polygon: PolygonDto? = null,
     val players: List<PlayerDto> = emptyList(),
     val owner: PlayerDto? = null,
-    val counter: Int
+    val counter: Int = 0
 ) {
     fun toEntity(): Game = Game(
         id = id,

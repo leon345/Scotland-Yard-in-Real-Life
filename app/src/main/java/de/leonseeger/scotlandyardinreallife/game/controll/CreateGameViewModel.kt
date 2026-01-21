@@ -1,25 +1,23 @@
 package de.leonseeger.scotlandyardinreallife.game.controll
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import de.leonseeger.scotlandyardinreallife.game.entity.Game
 import de.leonseeger.scotlandyardinreallife.game.entity.GameCatalogue
 import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.game.entity.Player
 import de.leonseeger.scotlandyardinreallife.game.entity.PlayerCatalogue
 import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CreateGameController(
+class CreateGameViewModel(
     private val gameCatalogue: GameCatalogue, private val playerCatalogue: PlayerCatalogue
-) {
-    private val controllerScope =
-        CoroutineScope(SupervisorJob() + Dispatchers.Main)
+) : ViewModel() {
     private val _gameState = MutableStateFlow<Game?>(null)
     val gamestate: StateFlow<Game?> = _gameState.asStateFlow()
 
@@ -33,7 +31,7 @@ class CreateGameController(
     val error: StateFlow<String?> = _error.asStateFlow()
 
     fun createGame(ownerId: String) {
-        controllerScope.launch {
+        viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
 
@@ -63,13 +61,20 @@ class CreateGameController(
     }
 
     fun observeGame(gameId: String) {
-        controllerScope.launch {
+        viewModelScope.launch {
             gameCatalogue.getGameById(gameId).collect { game -> _gameState.value = game }
         }
+
+        viewModelScope.launch {
+            playerCatalogue.getPlayersInGame(gameId).collect { players ->
+                _players.value = players ?: emptyList()
+            }
+        }
+
     }
 
     fun startGame() {
-        controllerScope.launch {
+        viewModelScope.launch {
             _gameState.value?.let { game ->
                 if (game.players.size < 2) {
                     _error.value = "Mindestens 2 Spieler erforderlich"
@@ -86,7 +91,7 @@ class CreateGameController(
     }
 
     fun addPlayer(player: Player) {
-        controllerScope.launch {
+        viewModelScope.launch {
             _gameState.value?.let { game ->
                 val result = withContext(Dispatchers.IO) {
                     playerCatalogue.addPlayerToGame(game.id, player)
@@ -100,7 +105,7 @@ class CreateGameController(
     }
 
     fun deleteGame() {
-        controllerScope.launch {
+        viewModelScope.launch {
             _gameState.value?.let { game ->
                 val result = withContext(Dispatchers.IO) {
                     gameCatalogue.deleteGame(game.id)

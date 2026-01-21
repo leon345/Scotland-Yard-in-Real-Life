@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +43,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameController
+import de.leonseeger.scotlandyardinreallife.game.CreateGameViewModelFactory
+import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.game.entity.Player
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
 import de.leonseeger.scotlandyardinreallife.ui.component.BodyText
@@ -55,15 +57,16 @@ import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
 
 class CreateGameActivity : ComponentActivity() {
     private val firebaseGateway = FirebaseGateway(FirebaseFirestore.getInstance())
-    private lateinit var controller: CreateGameController
+    private val controller: CreateGameViewModel by viewModels {
+        CreateGameViewModelFactory(
+            gameCatalogue = firebaseGateway,
+            playerCatalogue = firebaseGateway
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        controller = CreateGameController(
-            gameCatalogue = firebaseGateway,
-            playerCatalogue = firebaseGateway
-        )
 
         val gameId = null //TODO
         val ownerId = "user_${System.currentTimeMillis()}" //TODO
@@ -77,6 +80,7 @@ class CreateGameActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding),
                         onStartGame = {
                             // TODO: Navigation zum Spiel-Screen
+                            finish()
                         }
                     )
                 }
@@ -89,7 +93,7 @@ class CreateGameActivity : ComponentActivity() {
 
 @Composable
 fun CreateGameScreen(
-    controller: CreateGameController,
+    controller: CreateGameViewModel,
     gameId: String?,
     ownerId: String,
     modifier: Modifier = Modifier,
