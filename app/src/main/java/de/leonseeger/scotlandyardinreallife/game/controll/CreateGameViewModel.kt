@@ -21,7 +21,8 @@ class CreateGameViewModel(
     private val _gameState = MutableStateFlow<Game?>(null)
     val gamestate: StateFlow<Game?> = _gameState.asStateFlow()
 
-    private val _players = MutableStateFlow<List<Player>>(emptyList())
+    private val _players =
+        MutableStateFlow<List<Player>>(emptyList()) //TODO Backing Property Patter
     val players: StateFlow<List<Player>> = _players.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
@@ -29,6 +30,9 @@ class CreateGameViewModel(
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
+
+    private val _currentPlayerId = MutableStateFlow<String?>(null)
+    val currentPlayerId: StateFlow<String?> = _currentPlayerId.asStateFlow()
 
     fun createGame(ownerId: String) {
         viewModelScope.launch {
@@ -51,6 +55,7 @@ class CreateGameViewModel(
                 gameCatalogue.createGame(newGame)
             }
             result.onSuccess { gameId ->
+                _currentPlayerId.value = ownerId
                 _isLoading.value = false
                 observeGame(gameId)
             }.onFailure { e ->
@@ -70,7 +75,8 @@ class CreateGameViewModel(
             val result = withContext(Dispatchers.IO) {
                 playerCatalogue.addPlayerToGame(gameId, player)
             }
-            result.onSuccess {
+            result.onSuccess { generatedId ->
+                _currentPlayerId.value = generatedId
                 _isLoading.value = false
                 observeGame(gameId)
             }.onFailure { e ->
@@ -117,7 +123,7 @@ class CreateGameViewModel(
         }
     }
 
-    fun addPlayer(player: Player) {
+    /*fun addPlayer(player: Player) {
         viewModelScope.launch {
             _gameState.value?.let { game ->
                 val result = withContext(Dispatchers.IO) {
@@ -129,7 +135,7 @@ class CreateGameViewModel(
 
             }
         }
-    }
+    }*/
 
     fun deleteGame() {
         viewModelScope.launch {
