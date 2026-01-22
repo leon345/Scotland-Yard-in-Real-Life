@@ -21,13 +21,15 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
 
     override suspend fun addPlayerToGame(
         gameId: String, player: Player
-    ): Result<Unit> = try {
+    ): Result<String> = try {
         val gameRef = gamesCollection.document(gameId);
         Log.d("FirebaseGateway", "Adding player to game with ID $gameId: $player")
+        var generatedId = ""
         firestore.runTransaction { transaction ->
             val snapshot = transaction.get(gameRef)
             val currentCounter = snapshot.getLong("counter") ?: 0
             val newPlayerId = (currentCounter + 1).toString()
+            generatedId = newPlayerId
 
             val playerWithId = player.copy(id = newPlayerId)
             val playerDto = playerWithId.toDto()
@@ -38,7 +40,7 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
             Unit
 
         }.await()
-        Result.success(Unit)
+        Result.success(generatedId)
     } catch (e: Exception) {
         Log.e("FirebaseGateway", "Failed to add player to game", e)
         Result.failure(e)
