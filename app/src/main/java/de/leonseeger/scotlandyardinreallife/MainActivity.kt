@@ -31,10 +31,6 @@ import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameLobbyScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.JoinGameScreen
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import de.leonseeger.scotlandyardinreallife.game.boundary.CreateGameActivity
 import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
 import de.leonseeger.scotlandyardinreallife.ui.components.PlayMap
 import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
@@ -57,21 +53,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val playMap = remember { PlayMap() }
-
-
-
-
             ScotlandYardInRealLifeTheme {
-                PlayScreen(
+               /* PlayScreen(
                     playMap = playMap,
                     context = LocalContext.current
-                )
-                /*CustomMap(modifier = Modifier.fillMaxSize(),
-                    lat = 52.2720, lon = 8.0482,
-                    appContext = this
                 )*/
-                /*Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen(
                 navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavigation(
@@ -79,7 +65,7 @@ class MainActivity : ComponentActivity() {
                         viewModel = gameLobbyViewModel,
                         modifier = Modifier.padding(innerPadding)
                     )
-                }*/
+                }
             }
         }
     }
