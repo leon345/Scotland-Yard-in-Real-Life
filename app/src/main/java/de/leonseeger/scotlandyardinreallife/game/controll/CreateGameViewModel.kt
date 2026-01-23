@@ -90,18 +90,28 @@ class CreateGameViewModel(
 
     fun observeGame(gameId: String) {
         viewModelScope.launch {
-            gameCatalogue.getGameById(gameId).collect { game ->
-                _gameState.value = game
-                if (game == null) {
-                    _error.value = "Spiel wurde nicht gefunden"
+            try {
+                gameCatalogue.getGameById(gameId).collect { game ->
+                    _gameState.value = game
+                    if (game == null) {
+                        _error.value = "Spiel wurde nicht gefunden"
+                    }
                 }
+            } catch (e: Exception) {
+                _error.value = "Fehler beim Laden des Spiels: ${e.message}"
             }
+
         }
 
         viewModelScope.launch {
-            playerCatalogue.getPlayersInGame(gameId).collect { players ->
-                _players.value = players ?: emptyList()
+            try {
+                playerCatalogue.getPlayersInGame(gameId).collect { players ->
+                    _players.value = players ?: emptyList()
+                }
+            } catch (e: Exception) {
+                _error.value = "Fehler beim Laden der Spieler: ${e.message}"
             }
+
         }
 
     }
@@ -122,21 +132,6 @@ class CreateGameViewModel(
             }
         }
     }
-
-    /*fun addPlayer(player: Player) {
-        viewModelScope.launch {
-            _gameState.value?.let { game ->
-                val result = withContext(Dispatchers.IO) {
-                    playerCatalogue.addPlayerToGame(game.id, player)
-                }
-                result.onFailure { exception ->
-                    _error.value = "Fehler beim Hinzufügen des Spielers: ${exception.message}"
-                }
-
-            }
-        }
-    }*/
-
     fun deleteGame() {
         viewModelScope.launch {
             _gameState.value?.let { game ->
