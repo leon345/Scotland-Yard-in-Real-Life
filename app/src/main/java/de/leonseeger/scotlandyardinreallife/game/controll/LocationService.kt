@@ -60,12 +60,10 @@ class LocationService : Service() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
-                val location = locationResult.lastLocation
-                if (location != null) {
-                    getAndUpdatePlayer(gameId!!, playerId!!, location)
-                } else {
-                    Log.w(TAG, "Location is null")
-                }
+                val location = locationResult.lastLocation ?: return
+                val currentGameId = gameId ?: return
+                val currentPlayerId = playerId ?: return
+                getAndUpdatePlayer(currentGameId, currentPlayerId, location)
 
             }
 
@@ -134,7 +132,6 @@ class LocationService : Service() {
             .setOngoing(true).setPriority(
                 NotificationCompat.PRIORITY_LOW
             ).build()
-
     }
 
     private fun getAndUpdatePlayer(gameId: String, playerId: String, location: Location) {
@@ -150,26 +147,20 @@ class LocationService : Service() {
                 result.onFailure {
                     Log.e(TAG, "Failed to update player: $updatedPlayer", it)
                 }
-                Log.d(TAG, "Player updated: $updatedPlayer")
             } catch (e: Exception) {
                 Log.e(TAG, "Error updating player location", e)
-
-
             }
         }
     }
 
     private fun startLocationUpdates() {
-        val locationRequest = LocationRequest.Builder(5000L)
-            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-            .setMinUpdateIntervalMillis(3000L)
-            .setMaxUpdateDelayMillis(10000L)
-            .build()
+        val locationRequest =
+            LocationRequest.Builder(5000L).setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+                .setMinUpdateIntervalMillis(3000L).setMaxUpdateDelayMillis(10000L).build()
 
 
         if (ActivityCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                this, android.Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             Log.e(TAG, "Location permission not granted! Stopping service.")
