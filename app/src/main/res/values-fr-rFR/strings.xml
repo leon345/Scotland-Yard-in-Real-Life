@@ -15,4 +15,9 @@
     <string name="waiting_for_players">En attente de joueurs…</string>
     <string name="player_id">Joueur %1$s</string>
     <string name="host">Hôte</string>
+
+    <string name="location_tracking_channel_name">Suivi de position</string>
+    <string name="location_tracking_channel_description">Indique que votre position est suivie</string>
+    <string name="location_tracking_notification_title">Scotland Yard - Suivi GPS</string>
+    <string name="location_tracking_notification_text">Votre position est suivie pendant le jeu</string>
 </resources>
