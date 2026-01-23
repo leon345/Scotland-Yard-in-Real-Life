@@ -21,6 +21,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.MainActivity
+import de.leonseeger.scotlandyardinreallife.R
 import de.leonseeger.scotlandyardinreallife.game.entity.Player
 import de.leonseeger.scotlandyardinreallife.game.entity.PlayerCatalogue
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
@@ -50,6 +51,9 @@ class LocationService : Service() {
         const val EXTRA_PLAYER_ID = "EXTRA_PLAYER_ID"
         private const val NOTIFICATION_CHANNEL_ID = "location_tracking_channel"
         private const val NOTIFICATION_ID = 1001
+        private const val LOCATION_UPDATE_INTERVAL_MS = 5000L
+        private const val MIN_UPDATE_INTERVAL_MS = 3000L
+        private const val MAX_UPDATE_DELAY_MS = 10000L
     }
 
     override fun onCreate() {
@@ -108,8 +112,8 @@ class LocationService : Service() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Location Tracking"
-            val descriptionText = "Zeigt an, dass deine Position getrackt wird"
+            val name = getString(R.string.location_tracking_channel_name)
+            val descriptionText = getString(R.string.location_tracking_channel_description)
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance).apply {
                 description = descriptionText
@@ -126,9 +130,10 @@ class LocationService : Service() {
         val pendingIntent =
             PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("Scotland Yard - GPS Tracking")
-            .setContentText("Deine Position wird, während eines Spiels, getrackt")
-            .setSmallIcon(android.R.drawable.ic_menu_mylocation).setContentIntent(pendingIntent)
+            .setContentTitle(getString(R.string.location_tracking_notification_title))
+            .setContentText(getString(R.string.location_tracking_notification_text))
+            .setSmallIcon(android.R.drawable.ic_menu_mylocation)
+            .setContentIntent(pendingIntent) //TODO App Logo
             .setOngoing(true).setPriority(
                 NotificationCompat.PRIORITY_LOW
             ).build()
@@ -155,8 +160,10 @@ class LocationService : Service() {
 
     private fun startLocationUpdates() {
         val locationRequest =
-            LocationRequest.Builder(5000L).setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-                .setMinUpdateIntervalMillis(3000L).setMaxUpdateDelayMillis(10000L).build()
+            LocationRequest.Builder(LOCATION_UPDATE_INTERVAL_MS)
+                .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+                .setMinUpdateIntervalMillis(MIN_UPDATE_INTERVAL_MS)
+                .setMaxUpdateDelayMillis(MAX_UPDATE_DELAY_MS).build()
 
 
         if (ActivityCompat.checkSelfPermission(
