@@ -1,7 +1,6 @@
 package de.leonseeger.scotlandyardinreallife
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -11,11 +10,8 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -28,14 +24,12 @@ import de.leonseeger.scotlandyardinreallife.game.CreateGameViewModelFactory
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
+import de.leonseeger.scotlandyardinreallife.ui.components.PlayMap
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameLobbyScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.JoinGameScreen
-import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
-import de.leonseeger.scotlandyardinreallife.ui.components.PlayMap
 import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
 import org.maplibre.android.MapLibre
-import org.maplibre.android.geometry.LatLng
 
 class MainActivity : ComponentActivity() {
     private val firebaseGateway = FirebaseGateway(FirebaseFirestore.getInstance())
@@ -45,6 +39,7 @@ class MainActivity : ComponentActivity() {
         )
     }
     private lateinit var navController: NavHostController
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +64,36 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    //Für DEMO Location Service
+    /*override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        MapLibre.getInstance(this)
+        enableEdgeToEdge()
+
+        setContent {
+            val playMap = remember { PlayMap() }
+            ScotlandYardInRealLifeTheme {
+                navController = rememberNavController()
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Column(modifier = Modifier.padding(innerPadding)) {
+
+                        LocationServiceDemoScreen(
+                            modifier = Modifier.weight(0.4f)
+                        )
+
+                        Divider(thickness = 2.dp)
+
+                        AppNavigation(
+                            navController = navController,
+                            viewModel = gameLobbyViewModel,
+                            modifier = Modifier.weight(0.6f)
+                        )
+                    }
+                }
+            }
+        }
+    }*/
 }
 
 @Composable
