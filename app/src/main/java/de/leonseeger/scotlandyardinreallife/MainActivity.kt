@@ -175,7 +175,7 @@ fun AppNavigation(
         ) { backStackEntry ->
             val mode = backStackEntry.arguments?.getString("mode") ?: "CREATE"
             val gameCode = backStackEntry.arguments?.getString("gameCode")
-            val playerId = "user_${System.currentTimeMillis()}"
+            val playerId = "0" //TODO nicht schön
 
             GameLobbyScreen(
                 viewModel = viewModel,
