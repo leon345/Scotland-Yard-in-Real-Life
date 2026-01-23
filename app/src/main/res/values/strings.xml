@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">Scotland Yard in Real Life</string>
+
+    <string name="create_game_title">Create Game</string>
+    <string name="participating_players">Participating Players (%1$d)</string>
+    <string name="start_game">Start Game</string>
+    <string name="minimum_players_required">At least 2 players required</string>
+
+    <string name="invitation_code">Invitation Code</string>
+    <string name="share_code_message">Share this code with other players</string>
+
+    <string name="waiting_for_players">Waiting for players…</string>
+    <string name="player_id">Player %1$s</string>
+    <string name="host">Host</string>
+
+    <string name="location_tracking_channel_name">Location Tracking</string>
+    <string name="location_tracking_channel_description">Shows that your position is being tracked</string>
+    <string name="location_tracking_notification_title">Scotland Yard - GPS Tracking</string>
+    <string name="location_tracking_notification_text">Your position is being tracked during the game</string>
 </resources>
