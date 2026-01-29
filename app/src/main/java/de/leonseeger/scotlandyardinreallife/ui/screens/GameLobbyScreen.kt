@@ -27,6 +27,7 @@ import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle
 import de.leonseeger.scotlandyardinreallife.ui.component.SubheadingText
 import de.leonseeger.scotlandyardinreallife.ui.component.gameloby.InvitationCodeCard
 import de.leonseeger.scotlandyardinreallife.ui.component.gameloby.PlayersList
+import org.maplibre.geojson.Point
 
 @Composable
 fun GameLobbyScreen(
@@ -35,6 +36,7 @@ fun GameLobbyScreen(
     mode: String?,
     playerId: String,
     modifier: Modifier = Modifier,
+    playArea: List<Point>?,
     onStartGame: () -> Unit = {}
 ) {
     val gameState by viewModel.gamestate.collectAsState()

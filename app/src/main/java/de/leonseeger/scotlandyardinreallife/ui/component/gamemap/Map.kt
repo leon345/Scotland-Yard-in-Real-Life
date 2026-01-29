@@ -70,6 +70,10 @@ class PlayMapData {
         return listOf(points)
     }
 
+    fun getPolygonPoints(): List<Point>{
+        return polygonPoints;
+    }
+
     @Composable
     fun CustomMap(
         modifier: Modifier, lat: Double, lon: Double, appContext: Context,

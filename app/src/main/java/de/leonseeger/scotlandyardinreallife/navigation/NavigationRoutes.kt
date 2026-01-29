@@ -3,6 +3,7 @@ package de.leonseeger.scotlandyardinreallife.navigation
 
 object NavigationRoutes {
     const val HOME = "home"
+    const val PRE_LOBBY = "pre_lobby" //defining play area
     const val JOIN_GAME = "join_game"
     const val GAME_LOBBY = "game_lobby/{mode}/{gameCode}"
 

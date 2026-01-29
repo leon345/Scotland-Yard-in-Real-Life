@@ -1,6 +1,7 @@
 package de.leonseeger.scotlandyardinreallife.game.gateway.dto
 
 import android.location.Location
+import org.maplibre.geojson.Point
 
 data class LocationDto(
     val latitude: Double = 0.0,
@@ -9,6 +10,10 @@ data class LocationDto(
     fun toEntity(): Location = Location("").apply {
         latitude = this@LocationDto.latitude
         longitude = this@LocationDto.longitude
+    }
+
+    fun toPointEntity(): Point{
+        return Point.fromLngLat(this@LocationDto.longitude, this@LocationDto.latitude)
     }
 }
 

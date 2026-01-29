@@ -8,8 +8,7 @@ data class GameDto(
     val id: String = "",
     val createdAt: Long = 0L,
     val status: String = "",
-    //TODO @jannes implemtierung des Spielfeldes
-    //val polygon: PolygonDto? = null,
+    val polygon: List<LocationDto> = emptyList(),
     val players: List<PlayerDto> = emptyList(),
     val owner: PlayerDto? = null,
     val counter: Int = 0
@@ -25,7 +24,8 @@ data class GameDto(
         },
         players = players.map { it.toEntity() },
         owner = owner?.toEntity() ?: throw IllegalArgumentException("Owner cannot be null"),
-        counter = counter
+        counter = counter,
+        polygon = polygon.map { it.toPointEntity() }
     )
 
 }

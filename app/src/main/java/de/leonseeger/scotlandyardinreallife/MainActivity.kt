@@ -5,7 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -13,6 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.game.CreateGameViewModelFactory
@@ -46,20 +51,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             val playMap = remember { PlayMapData() }
             ScotlandYardInRealLifeTheme {
-                DefineMapScreen()
-
                 /*PlayMap(
                     playMap = playMap,
                     context = LocalContext.current
                 )*/
-                /*navController = rememberNavController()
+                navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavigation(
                         navController = navController,
                         viewModel = gameLobbyViewModel,
                         modifier = Modifier.padding(innerPadding)
                     )
-                }*/
+                }
             }
         }
     }
@@ -96,8 +99,6 @@ class MainActivity : ComponentActivity() {
 }
 
 
-
-
 @Composable
 fun AppNavigation(
     navController: NavHostController,
@@ -112,9 +113,7 @@ fun AppNavigation(
         composable(NavigationRoutes.HOME) {
             HomeScreen(
                 onCreateGame = {
-                    navController.navigate(
-                        NavigationRoutes.gameLobby(mode = "CREATE")
-                    )
+                    navController.navigate(NavigationRoutes.PRE_LOBBY)
                 },
                 onJoinGame = {
                     navController.navigate(NavigationRoutes.JOIN_GAME)
@@ -122,6 +121,16 @@ fun AppNavigation(
             )
         }
 
+        composable(NavigationRoutes.PRE_LOBBY) {
+            DefineMapScreen(
+                onMapDefined = { poly ->
+                    viewModel.setPlayArea(poly)
+                    navController.navigate(
+                        NavigationRoutes.gameLobby(mode = "CREATE")
+                    )
+                }
+            )
+        }
 
         composable(NavigationRoutes.JOIN_GAME) {
             JoinGameScreen(
@@ -147,6 +156,7 @@ fun AppNavigation(
             )
         ) { backStackEntry ->
             val mode = backStackEntry.arguments?.getString("mode") ?: "CREATE"
+
             val gameCode = backStackEntry.arguments?.getString("gameCode")
             val playerId = "0" //TODO nicht schön
 
@@ -155,6 +165,7 @@ fun AppNavigation(
                 mode = mode,
                 gameId = if (gameCode.isNullOrEmpty()) null else gameCode,
                 playerId = playerId,
+                playArea = null,
                 onStartGame = {
                     // TODO: Navigation zum aktiven Game Screen
                     navController.popBackStack(NavigationRoutes.HOME, inclusive = false)

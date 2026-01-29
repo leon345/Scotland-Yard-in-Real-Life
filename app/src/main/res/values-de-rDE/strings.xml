@@ -20,4 +20,8 @@
     <string name="location_tracking_channel_description">Zeigt an, dass deine Position getrackt wird</string>
     <string name="location_tracking_notification_title">Scotland Yard - GPS Tracking</string>
     <string name="location_tracking_notification_text">Deine Position wird während des Spiels getrackt</string>
+
+    <!-- Defining Play area -->
+    <string name="confirm">Bestätigen</string>
+    <string name="define_playarea">Spielbereich festlegen</string>
 </resources>
