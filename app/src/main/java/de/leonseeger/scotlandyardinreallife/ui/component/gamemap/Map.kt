@@ -1,18 +1,10 @@
-package de.leonseeger.scotlandyardinreallife.ui.components
+package de.leonseeger.scotlandyardinreallife.ui.component.gamemap
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import  android.content.Context
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.runtime.mutableStateOf
 import de.leonseeger.scotlandyardinreallife.BuildConfig
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.geometry.LatLng
@@ -35,22 +27,9 @@ class PlayMap {
     private lateinit var mapLibreMap: MapLibreMap
     private var polygonPoints = mutableListOf<Point>()
 
-    /*fun addPolyToMap(positions: Array<LatLng>) {
-        var poly = Polygon.fromLngLats(latLngToPointList(positions))
+    fun addPlayerPointToMap(loc: LatLng){
 
-        val geoSrc = GeoJsonSource("playarea-src", poly)
-        mapLibreMap.getStyle { style ->
-            if (style.removeSource(geoSrc))
-                Log.v("MAP-POLY", "Removed old poly src");
-            style.addSource(geoSrc)
-            val fill = FillLayer("playarea-fill", "playarea-src")
-                .withProperties(
-                    fillColor("#22ff00"),
-                    fillOpacity(0.5f)
-                )
-            style.addLayer(fill)
-        }
-    }*/
+    }
 
     fun addPolyPoint(coord: LatLng): Boolean {
         var polyFull = false

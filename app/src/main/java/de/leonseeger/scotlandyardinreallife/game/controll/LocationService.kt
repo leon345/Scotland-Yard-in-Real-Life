@@ -1,18 +1,22 @@
 package de.leonseeger.scotlandyardinreallife.game.controll
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -22,6 +26,7 @@ import com.google.android.gms.location.Priority
 import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.MainActivity
 import de.leonseeger.scotlandyardinreallife.R
+import de.leonseeger.scotlandyardinreallife.game.controll.LocationService.Companion.TAG
 import de.leonseeger.scotlandyardinreallife.game.entity.Player
 import de.leonseeger.scotlandyardinreallife.game.entity.PlayerCatalogue
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
@@ -191,6 +196,23 @@ class LocationService : Service() {
             }
     }
 
+    fun getLastKnownLocation(onResult: (Location?) -> Void){
+        if(ActivityCompat.checkSelfPermission(
+                this, android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED){
+            Log.e(TAG, "Location permission not granted")
+            onResult(null)
+            return
+        }
 
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+                onResult(location)
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Failed to get last known location", e)
+                onResult(null)
+            }
+    }
 }
 

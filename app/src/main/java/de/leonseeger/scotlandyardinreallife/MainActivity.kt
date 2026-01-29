@@ -1,30 +1,26 @@
 package de.leonseeger.scotlandyardinreallife
 
-import android.content.Context
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.game.CreateGameViewModelFactory
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
-import de.leonseeger.scotlandyardinreallife.ui.components.PlayMap
+import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMap
+import de.leonseeger.scotlandyardinreallife.ui.screens.DefineMapScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameLobbyScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.JoinGameScreen
@@ -49,24 +45,26 @@ class MainActivity : ComponentActivity() {
         setContent {
             val playMap = remember { PlayMap() }
             ScotlandYardInRealLifeTheme {
-               /* PlayScreen(
+                DefineMapScreen()
+
+                /*PlayMap(
                     playMap = playMap,
                     context = LocalContext.current
                 )*/
-                navController = rememberNavController()
+                /*navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavigation(
                         navController = navController,
                         viewModel = gameLobbyViewModel,
                         modifier = Modifier.padding(innerPadding)
                     )
-                }
+                }*/
             }
         }
     }
 
-    //Für DEMO Location Service
-    /*override fun onCreate(savedInstanceState: Bundle?) {
+    /*//Für DEMO Location Service
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MapLibre.getInstance(this)
         enableEdgeToEdge()
@@ -96,33 +94,7 @@ class MainActivity : ComponentActivity() {
     }*/
 }
 
-@Composable
-fun PlayScreen(
-    playMap: PlayMap,
-    context: Context
-) {
-    playMap.CustomMap(
-        modifier = Modifier.fillMaxSize(),
-        lat = 52.2720,
-        lon = 8.0482,
-        appContext = context,
-        onMapReady = { map ->
-            /*var positions = arrayOf(
-                LatLng(52.267, 8.0532),
-                LatLng(52.272, 8.0575),
-                LatLng(52.281, 8.0432),
-                LatLng(52.273, 8.0402)
-            )*/
-            //map.addPolyToMap(positions);
-            map.getMapLibreMap().addOnMapClickListener { point ->
-                if(!map.addPolyPoint(point)){
-                    Toast.makeText(context, "Polygon braucht mehr Punkte", Toast.LENGTH_SHORT).show()
-                }
-                true
-            }
-        }
-    )
-}
+
 
 
 @Composable

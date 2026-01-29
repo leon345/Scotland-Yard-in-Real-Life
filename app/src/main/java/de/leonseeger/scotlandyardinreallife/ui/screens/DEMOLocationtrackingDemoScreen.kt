@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -41,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import de.leonseeger.scotlandyardinreallife.game.controll.LocationService
 
 // ========================================
