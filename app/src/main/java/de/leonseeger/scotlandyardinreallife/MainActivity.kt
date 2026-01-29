@@ -20,6 +20,7 @@ import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMap
+import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
 import de.leonseeger.scotlandyardinreallife.ui.screens.DefineMapScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameLobbyScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity() {
         MapLibre.getInstance(this)
         enableEdgeToEdge()
         setContent {
-            val playMap = remember { PlayMap() }
+            val playMap = remember { PlayMapData() }
             ScotlandYardInRealLifeTheme {
                 DefineMapScreen()
 

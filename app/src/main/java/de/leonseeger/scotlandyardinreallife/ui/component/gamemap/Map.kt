@@ -20,7 +20,7 @@ import org.maplibre.geojson.Feature
 import org.maplibre.geojson.Point
 import org.maplibre.geojson.Polygon
 
-class PlayMap {
+class PlayMapData {
     private val polygonMapSrcName = "playarea-src"
     private val polygonFillName = "playarea-fill"
 
@@ -73,7 +73,7 @@ class PlayMap {
     @Composable
     fun CustomMap(
         modifier: Modifier, lat: Double, lon: Double, appContext: Context,
-        onMapReady: (PlayMap) -> Unit
+        onMapReady: (PlayMapData) -> Unit
     ) {
         val mapOptions = MapLibreMapOptions.createFromAttributes(appContext)
         mapOptions.apply {

@@ -1,8 +1,10 @@
 package de.leonseeger.scotlandyardinreallife.game.controll
 
 import android.app.Application
+import android.content.Context
 import android.location.Location
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import de.leonseeger.scotlandyardinreallife.game.gateway.locationHelper.LocationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,6 +46,10 @@ class DefinePlaymapViewModel( application: Application) : AndroidViewModel(appli
             } else {
                 LocationPermissionState.Denied
             }
+    }
+
+    fun getContext(): Context {
+        return application;
     }
 }
 
