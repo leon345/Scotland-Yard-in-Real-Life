@@ -12,7 +12,8 @@ data class GameDto(
     //val polygon: PolygonDto? = null,
     val players: List<PlayerDto> = emptyList(),
     val owner: PlayerDto? = null,
-    val counter: Int = 0
+    val counter: Int = 0,
+    val settings: GameSettingDto? = null
 ) {
     fun toEntity(): Game = Game(
         id = id,
@@ -25,7 +26,8 @@ data class GameDto(
         },
         players = players.map { it.toEntity() },
         owner = owner?.toEntity() ?: throw IllegalArgumentException("Owner cannot be null"),
-        counter = counter
+        counter = counter,
+        settings = settings?.toEntity() ?: throw IllegalArgumentException("Settings cannot be null")
     )
 
 }
@@ -36,5 +38,6 @@ fun Game.toDto(): GameDto = GameDto(
     status = status.name,
     players = players.map { it.toDto() },
     owner = owner.toDto(),
-    counter = counter
+    counter = counter,
+    settings = settings.toDto()
 )
