@@ -168,10 +168,31 @@ class CreateGameViewModel(
     }
 
     fun updateGameSettings(gameDuration: Long, banditRevealInterval: Long) {
-        _gameSettings.value = GameSettings(
-            gameDuration = gameDuration,
-            banditRevealInterval = banditRevealInterval
-        )
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+
+            _gameSettings.value = GameSettings(
+                gameDuration = gameDuration,
+                banditRevealInterval = banditRevealInterval
+            )
+
+            _gameState.value?.let { curentgame ->
+                val updatedGame = curentgame.copy(settings = _gameSettings.value)
+                val result = withContext(Dispatchers.IO) {
+                    gameCatalogue.updateGame(updatedGame)
+                }
+
+                result.onSuccess {
+                    _isLoading.value = false
+                }.onFailure { exception ->
+                    _error.value =
+                        "Fehler beim Aktualisieren der Einstellungen: ${exception.message}"
+                    _isLoading.value = false
+                }
+            }
+
+        }
 
     }
 

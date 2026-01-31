@@ -48,10 +48,12 @@ fun GameLobbyScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
 
-    LaunchedEffect(gameId, mode) {
-        when (mode) {
-            "CREATE" -> viewModel.createGame(playerId)
-            "JOIN" -> gameId?.let { viewModel.joinGame(it, playerId) }
+    LaunchedEffect(Unit) {
+        if (gameState == null) {
+            when (mode) {
+                "CREATE" -> viewModel.createGame(playerId)
+                "JOIN" -> gameId?.let { viewModel.joinGame(it, playerId) }
+            }
         }
     }
 
