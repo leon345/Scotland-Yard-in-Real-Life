@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.leonseeger.scotlandyardinreallife.game.entity.Game
 import de.leonseeger.scotlandyardinreallife.game.entity.GameCatalogue
+import de.leonseeger.scotlandyardinreallife.game.entity.GameSettings
 import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.game.entity.Player
 import de.leonseeger.scotlandyardinreallife.game.entity.PlayerCatalogue
@@ -34,6 +35,9 @@ class CreateGameViewModel(
     private val _currentPlayerId = MutableStateFlow<String?>(null)
     val currentPlayerId: StateFlow<String?> = _currentPlayerId.asStateFlow()
 
+    private val _gameSettings = MutableStateFlow(GameSettings.DEFAULT)
+    val gameSettings: StateFlow<GameSettings> = _gameSettings.asStateFlow()
+
     fun createGame(ownerId: String) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -49,7 +53,8 @@ class CreateGameViewModel(
                 createdAt = System.currentTimeMillis(),
                 status = GameStatus.WAITING,
                 players = listOf(owner),
-                owner = owner
+                owner = owner,
+                settings = _gameSettings.value
             )
             val result = withContext(Dispatchers.IO) {
                 gameCatalogue.createGame(newGame)
@@ -161,6 +166,36 @@ class CreateGameViewModel(
             }
         }
     }
+
+    fun updateGameSettings(gameDuration: Long, banditRevealInterval: Long) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+
+            _gameSettings.value = GameSettings(
+                gameDuration = gameDuration,
+                banditRevealInterval = banditRevealInterval
+            )
+
+            _gameState.value?.let { curentgame ->
+                val updatedGame = curentgame.copy(settings = _gameSettings.value)
+                val result = withContext(Dispatchers.IO) {
+                    gameCatalogue.updateGame(updatedGame)
+                }
+
+                result.onSuccess {
+                    _isLoading.value = false
+                }.onFailure { exception ->
+                    _error.value =
+                        "Fehler beim Aktualisieren der Einstellungen: ${exception.message}"
+                    _isLoading.value = false
+                }
+            }
+
+        }
+
+    }
+
 
     fun clearError() {
         _error.value = null
