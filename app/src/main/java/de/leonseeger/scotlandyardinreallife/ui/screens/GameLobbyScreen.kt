@@ -3,7 +3,6 @@ package de.leonseeger.scotlandyardinreallife.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,11 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,20 +35,17 @@ fun GameLobbyScreen(
     mode: String?,
     playerId: String,
     modifier: Modifier = Modifier,
-    onStartGame: () -> Unit = {},
-    onNavigateToSettings: () -> Unit = {}
+    onStartGame: () -> Unit = {}
 ) {
     val gameState by viewModel.gamestate.collectAsState()
     val players by viewModel.players.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
 
-    LaunchedEffect(Unit) {
-        if (gameState == null) {
-            when (mode) {
-                "CREATE" -> viewModel.createGame(playerId)
-                "JOIN" -> gameId?.let { viewModel.joinGame(it, playerId) }
-            }
+    LaunchedEffect(gameId, mode) {
+        when (mode) {
+            "CREATE" -> viewModel.createGame(playerId)
+            "JOIN" -> gameId?.let { viewModel.joinGame(it, playerId) }
         }
     }
 
@@ -63,23 +55,9 @@ fun GameLobbyScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            SectionTitle(
-                text = stringResource(R.string.create_game_title)
-            )
-
-            IconButton(onClick = onNavigateToSettings) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Spieleinstellungen",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
+        SectionTitle(
+            text = stringResource(R.string.create_game_title)
+        )
         if (isLoading) {
             Box(
                 modifier = Modifier

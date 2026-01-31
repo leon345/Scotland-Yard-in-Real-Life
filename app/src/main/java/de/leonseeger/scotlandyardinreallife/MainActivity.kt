@@ -26,7 +26,6 @@ import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
 import de.leonseeger.scotlandyardinreallife.ui.components.PlayMap
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameLobbyScreen
-import de.leonseeger.scotlandyardinreallife.ui.screens.GameSettingScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.JoinGameScreen
 import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
@@ -50,10 +49,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             val playMap = remember { PlayMap() }
             ScotlandYardInRealLifeTheme {
-                /* PlayScreen(
-                     playMap = playMap,
-                     context = LocalContext.current
-                 )*/
+               /* PlayScreen(
+                    playMap = playMap,
+                    context = LocalContext.current
+                )*/
                 navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavigation(
@@ -116,9 +115,8 @@ fun PlayScreen(
             )*/
             //map.addPolyToMap(positions);
             map.getMapLibreMap().addOnMapClickListener { point ->
-                if (!map.addPolyPoint(point)) {
-                    Toast.makeText(context, "Polygon braucht mehr Punkte", Toast.LENGTH_SHORT)
-                        .show()
+                if(!map.addPolyPoint(point)){
+                    Toast.makeText(context, "Polygon braucht mehr Punkte", Toast.LENGTH_SHORT).show()
                 }
                 true
             }
@@ -177,7 +175,7 @@ fun AppNavigation(
         ) { backStackEntry ->
             val mode = backStackEntry.arguments?.getString("mode") ?: "CREATE"
             val gameCode = backStackEntry.arguments?.getString("gameCode")
-            val playerId = "0" //TODO nicht schön
+            val playerId = "user_${System.currentTimeMillis()}"
 
             GameLobbyScreen(
                 viewModel = viewModel,
@@ -187,18 +185,6 @@ fun AppNavigation(
                 onStartGame = {
                     // TODO: Navigation zum aktiven Game Screen
                     navController.popBackStack(NavigationRoutes.HOME, inclusive = false)
-                },
-                onNavigateToSettings = {
-                    navController.navigate(NavigationRoutes.GAME_SETTINGS)
-                }
-            )
-        }
-
-        composable(NavigationRoutes.GAME_SETTINGS) {
-            GameSettingScreen(
-                viewModel = viewModel,
-                onNavigateBack = {
-                    navController.popBackStack()
                 }
             )
         }
