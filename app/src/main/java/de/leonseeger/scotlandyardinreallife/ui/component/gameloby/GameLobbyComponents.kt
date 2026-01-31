@@ -150,7 +150,7 @@ fun PlayerItem(player: Player, isOwner: Boolean, onClick: () -> Unit = {}) {
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 BodyText(
-                    text = stringResource(R.string.player_id, player.id),
+                    text = stringResource(R.string.player_id, player.id.take(6)),
                     fontWeight = FontWeight.Medium
                 )
 

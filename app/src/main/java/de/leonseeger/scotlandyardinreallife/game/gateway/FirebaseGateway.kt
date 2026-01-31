@@ -1,5 +1,6 @@
 package de.leonseeger.scotlandyardinreallife.game.gateway
 
+import android.location.Location
 import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,7 +14,6 @@ import de.leonseeger.scotlandyardinreallife.game.gateway.dto.toDto
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.tasks.await
 
 class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogue, GameCatalogue {
@@ -114,6 +114,16 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
 
     }
 
+    override fun observePlayerLocations(gameId: String): Flow<Map<Player, String>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updatePlayerLocation(
+        gameId: String, playerId: String, location: Location
+    ): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun createGame(game: Game): Result<String> = try {
         val docRef = gamesCollection.document()
         val gameWithId = game.copy(id = docRef.id)
@@ -140,9 +150,6 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
         awaitClose {
             listener.remove()
         }
-    }.catch { e ->
-        Log.e("FirebaseGateway", "Failed to get game", e)
-        emit(null)
     }
 
     override suspend fun updateGame(game: Game): Result<Unit> = try {
@@ -180,6 +187,10 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
         awaitClose {
             listener.remove()
         }
+    }
+
+    override fun observeActiveGame(): Flow<Game> = callbackFlow {
+        //TODO das aktuelle teilnehmende game. Wodrinnen man ist
     }
 
     override suspend fun updateGameStatus(
