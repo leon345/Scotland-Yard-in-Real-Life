@@ -13,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -22,12 +23,14 @@ import androidx.navigation.navArgument
 import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.game.CreateGameViewModelFactory
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.game.controll.RunningGameViewModel
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMap
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
 import de.leonseeger.scotlandyardinreallife.ui.screens.DefineMapScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameLobbyScreen
+import de.leonseeger.scotlandyardinreallife.ui.screens.GameRunningScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameSettingScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.JoinGameScreen
@@ -167,8 +170,10 @@ fun AppNavigation(
                 gameId = if (gameCode.isNullOrEmpty()) null else gameCode,
                 playerId = playerId,
                 playArea = null,
-                onStartGame = {
+                onStartGame = { game, currPlayerId ->
                     // TODO: Navigation zum aktiven Game Screen
+                    val runGameModel = RunningGameViewModel(gameState = game, currentPlayerId = currPlayerId)
+                    navController.navigate(NavigationRoutes.GAME_RUNNING)
                     navController.popBackStack(NavigationRoutes.HOME, inclusive = false)
                 },
                 onNavigateToSettings = {
@@ -184,6 +189,10 @@ fun AppNavigation(
                     navController.popBackStack()
                 }
             )
+        }
+
+        composable (NavigationRoutes.GAME_RUNNING){
+
         }
     }
 }

@@ -43,7 +43,9 @@ class PlayMapData {
     }
 
     fun updatePolygon(style: Style): Boolean {
-        polygonPoints.add(polygonPoints.first()) //finishes polygon to full circle
+        if(polygonPoints.last() != polygonPoints.first())
+            polygonPoints.add(polygonPoints.first()) //finishes polygon to full circle if not already
+
         if (polygonPoints.size < 4) {
             // polygon to small
             Log.w("Polygon Making", "updatePolygon size: " + polygonPoints.size)

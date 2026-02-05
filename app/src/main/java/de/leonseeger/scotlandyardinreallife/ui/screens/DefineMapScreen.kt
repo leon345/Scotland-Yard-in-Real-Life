@@ -11,13 +11,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.game.controll.DefinePlaymapViewModel
+import de.leonseeger.scotlandyardinreallife.game.controll.MapLocationViewModel
 import de.leonseeger.scotlandyardinreallife.game.controll.LocationPermissionState
 import de.leonseeger.scotlandyardinreallife.ui.component.CenteredLoadingIndicator
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
@@ -47,10 +45,9 @@ import org.maplibre.geojson.Point
  */
 @Composable
 fun DefineMapScreen(
-    viewModel: DefinePlaymapViewModel = viewModel(),
+    viewModel: MapLocationViewModel = viewModel(),
     onMapDefined: (List<Point>) -> Unit
 ) {
-
     val permissionGranted by viewModel.permissionGranted.collectAsState()
 
     val permissionLauncher =
@@ -59,7 +56,7 @@ fun DefineMapScreen(
         ) { granted ->
             viewModel.onPermissionResult(granted)
         }
-
+    //switch action based on permission state
     when (permissionGranted) {
         LocationPermissionState.Granted -> {
             DefiningMap(viewModel, onMapDefined)
@@ -81,7 +78,7 @@ fun DefineMapScreen(
 
 
 @Composable
-fun DefiningMap(viewModel: DefinePlaymapViewModel, onMapDefined: (List<Point>) -> Unit) {
+fun DefiningMap(viewModel: MapLocationViewModel, onMapDefined: (List<Point>) -> Unit) {
     val location by viewModel.currentLocation.collectAsState()
 
     LaunchedEffect(Unit) {
