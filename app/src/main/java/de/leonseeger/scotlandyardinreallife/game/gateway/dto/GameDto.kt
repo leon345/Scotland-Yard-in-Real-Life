@@ -39,5 +39,6 @@ fun Game.toDto(): GameDto = GameDto(
     players = players.map { it.toDto() },
     owner = owner.toDto(),
     counter = counter,
-    settings = settings.toDto()
+    settings = settings.toDto(),
+    polygon = polygon.map { it.toDto() }
 )

@@ -58,8 +58,7 @@ class CreateGameViewModel(
                 status = GameStatus.WAITING,
                 players = listOf(owner),
                 owner = owner,
-                settings = _gameSettings.value
-                owner = owner,
+                settings = _gameSettings.value,
                 polygon = playArea.value
             )
             val result = withContext(Dispatchers.IO) {

@@ -22,3 +22,8 @@ fun Location.toDto(): LocationDto = LocationDto(
     longitude = longitude
 )
 
+fun Point.toDto(): LocationDto = LocationDto(
+    latitude = latitude(),
+    longitude = longitude()
+)
+
