@@ -5,11 +5,20 @@ import android.location.Location
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.Undo
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,11 +27,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,7 +41,6 @@ import de.leonseeger.scotlandyardinreallife.game.controll.LocationPermissionStat
 import de.leonseeger.scotlandyardinreallife.ui.component.CenteredLoadingIndicator
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
 import org.maplibre.geojson.Point
-import kotlin.io.encoding.Base64
 
 /**
  * The Map shown before the Game Lobby for the Host, to define the Playarea
@@ -95,7 +103,10 @@ fun PlayareaDefinitionMap(
     startLocation: Location,
     onMapDefined: (List<Point>) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
         mapData.CustomMap(
             modifier = Modifier.fillMaxSize(),
             lat = startLocation.latitude,
@@ -111,24 +122,70 @@ fun PlayareaDefinitionMap(
                 }
             }
         )
-        Text(stringResource(R.string.define_playarea),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.align(Alignment.TopCenter).padding(top = 30.dp))
-        Button(
-            onClick = {
-                val polygon = mapData.getPolygonPoints()
-                if(polygon.size > 4)
-                    onMapDefined(polygon)
-                else
-                    Toast.makeText(context, "Polygon braucht mehr Punkte", Toast.LENGTH_SHORT)
-                        .show()
-            },
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 12.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .border(
+                        2.dp,
+                        colorResource(R.color.neon_yellow),
+                        RoundedCornerShape(8.dp)
+                    )
+                    .clip(RoundedCornerShape(8.dp))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .blur(12.dp)
+                        .background(
+                            colorResource(R.color.blue_transparent),
+                            RoundedCornerShape(8.dp)
+                        )
+                        .matchParentSize()
+                )
+                Text(
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                    color = colorResource(R.color.neon_yellow),
+                    text = stringResource(R.string.define_playarea),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+
+        Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 20.dp)
         ) {
-            Text(stringResource(R.string.confirm))
+            Button(
+                colors = ButtonColors(colorResource(R.color.neon_yellow), contentColor = colorResource(R.color.black),
+                    disabledContainerColor = colorResource(R.color.grey), disabledContentColor = colorResource(R.color.black)),
+                onClick = {
+                    mapData.removeLastPolyPoint()
+                },
+                ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Undo,
+                    contentDescription = "Undo"
+                )
+            }
+            Button(
+                onClick = {
+                    val polygon = mapData.getPolygonPoints()
+                    if (polygon.size > 4)
+                        onMapDefined(polygon)
+                    else
+                        Toast.makeText(context, "Polygon braucht mehr Punkte", Toast.LENGTH_SHORT)
+                            .show()
+                },
+
+                ) {
+                Text(stringResource(R.string.confirm))
+            }
         }
+
     }
 }

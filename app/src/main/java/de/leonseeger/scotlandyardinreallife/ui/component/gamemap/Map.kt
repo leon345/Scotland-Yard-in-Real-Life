@@ -17,6 +17,7 @@ import org.maplibre.android.style.layers.PropertyFactory.fillColor
 import org.maplibre.android.style.layers.PropertyFactory.fillOpacity
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Feature
+import org.maplibre.geojson.FeatureCollection
 import org.maplibre.geojson.Point
 import org.maplibre.geojson.Polygon
 
@@ -72,6 +73,26 @@ class PlayMapData {
 
     fun getPolygonPoints(): List<Point>{
         return polygonPoints;
+    }
+
+    fun removeLastPolyPoint(){
+        if(polygonPoints.size > 3){
+            polygonPoints.removeAt(polygonPoints.size-2)
+            val newLast = polygonPoints.removeAt(polygonPoints.size-2)
+            addPolyPoint(LatLng(newLast.latitude(), newLast.longitude()))
+        }
+        else if(polygonPoints.isNotEmpty()){
+            polygonPoints.removeAt(polygonPoints.lastIndex)
+        }
+        //remove poly if not full poly
+        if(polygonPoints.size < 4){
+            mapLibreMap.getStyle{ style ->
+                run {
+                    val source = style.getSourceAs<GeoJsonSource>(polygonMapSrcName) ?: return@getStyle;
+                    source.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
+                }
+            }
+        }
     }
 
     @Composable
