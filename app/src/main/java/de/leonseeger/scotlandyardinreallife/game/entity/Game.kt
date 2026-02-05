@@ -9,7 +9,8 @@ data class Game(
     val polygon: List<Point>,
     val players: List<Player>,
     val owner: Player,
-    val counter: Int = 0
+    val counter: Int = 0,
+    val settings: GameSettings
 ) {
 
 

@@ -28,6 +28,7 @@ import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMap
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
 import de.leonseeger.scotlandyardinreallife.ui.screens.DefineMapScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameLobbyScreen
+import de.leonseeger.scotlandyardinreallife.ui.screens.GameSettingScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.JoinGameScreen
 import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
@@ -169,6 +170,18 @@ fun AppNavigation(
                 onStartGame = {
                     // TODO: Navigation zum aktiven Game Screen
                     navController.popBackStack(NavigationRoutes.HOME, inclusive = false)
+                },
+                onNavigateToSettings = {
+                    navController.navigate(NavigationRoutes.GAME_SETTINGS)
+                }
+            )
+        }
+
+        composable(NavigationRoutes.GAME_SETTINGS) {
+            GameSettingScreen(
+                viewModel = viewModel,
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
