@@ -9,6 +9,5 @@ interface GameCatalogue {
     suspend fun updateGame(game: Game): Result<Unit>
     suspend fun deleteGame(gameId: String): Result<Unit>
     fun getGamesByStatus(status: GameStatus): Flow<List<Game>>
-    fun observeActiveGame(): Flow<Game>
     suspend fun updateGameStatus(gameId: String, status: GameStatus): Result<Unit>
 }
