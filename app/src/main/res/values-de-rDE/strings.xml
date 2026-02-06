@@ -20,4 +20,12 @@
     <string name="location_tracking_channel_description">Zeigt an, dass deine Position getrackt wird</string>
     <string name="location_tracking_notification_title">Scotland Yard - GPS Tracking</string>
     <string name="location_tracking_notification_text">Deine Position wird während des Spiels getrackt</string>
+
+    <string name="join_game_title">Spiel beitreten</string>
+    <string name="game_code_label">Spiel-Code</string>
+    <string name="join_button">Beitreten</string>
+    <string name="loading">Lädt…</string>
+    <string name="invalid_game_code_error">Der Spiel-Code ist ungültiger</string>
+
+
 </resources>

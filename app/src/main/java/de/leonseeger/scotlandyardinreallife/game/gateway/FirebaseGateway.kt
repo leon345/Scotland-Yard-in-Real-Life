@@ -21,29 +21,44 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
 
     override suspend fun addPlayerToGame(
         gameId: String, player: Player
-    ): Result<String> = try {
-        val gameRef = gamesCollection.document(gameId);
-        Log.d("FirebaseGateway", "Adding player to game with ID $gameId: $player")
-        var generatedId = ""
-        firestore.runTransaction { transaction ->
-            val snapshot = transaction.get(gameRef)
-            val currentCounter = snapshot.getLong("counter") ?: 0
-            val newPlayerId = (currentCounter + 1).toString()
-            generatedId = newPlayerId
+    ): Result<String> {
+        return try {
+            val gameRef = gamesCollection.document(gameId);
+            Log.d("FirebaseGateway", "Adding player to game with ID $gameId: $player")
+            var generatedId = ""
+            firestore.runTransaction { transaction ->
+                val snapshot = transaction.get(gameRef)
 
-            val playerWithId = player.copy(id = newPlayerId)
-            val playerDto = playerWithId.toDto()
+                if (!snapshot.exists()) {
+                    throw IllegalStateException()
+                }
 
-            transaction.update(gameRef, "counter", currentCounter + 1)
-            transaction.update(gameRef, "players", FieldValue.arrayUnion(playerDto))
+                val gameDto =
+                    snapshot.toObject(GameDto::class.java) ?: throw IllegalStateException()
 
-            Unit
+                if (gameDto.status == GameStatus.FINISHED.name) {
+                    throw IllegalStateException()
+                }
 
-        }.await()
-        Result.success(generatedId)
-    } catch (e: Exception) {
-        Log.e("FirebaseGateway", "Failed to add player to game", e)
-        Result.failure(e)
+
+                val currentCounter = snapshot.getLong("counter") ?: 0
+                val newPlayerId = (currentCounter + 1).toString()
+                generatedId = newPlayerId
+
+                val playerWithId = player.copy(id = newPlayerId)
+                val playerDto = playerWithId.toDto()
+
+                transaction.update(gameRef, "counter", currentCounter + 1)
+                transaction.update(gameRef, "players", FieldValue.arrayUnion(playerDto))
+
+                Unit
+
+            }.await()
+            Result.success(generatedId)
+        } catch (e: Exception) {
+            Log.e("FirebaseGateway", "Failed to add player to game", e)
+            Result.failure(e)
+        }
     }
 
     override suspend fun updatePlayer(
@@ -172,9 +187,9 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
                     close(error)
                     return@addSnapshotListener
                 }
-                val games =
-                    snapshot?.documents?.mapNotNull { it.toObject(GameDto::class.java)?.toEntity() }
-                        ?: emptyList()
+                val games = snapshot?.documents?.mapNotNull {
+                    it.toObject(GameDto::class.java)?.toEntity()
+                } ?: emptyList()
                 trySend(games)
             }
         awaitClose {

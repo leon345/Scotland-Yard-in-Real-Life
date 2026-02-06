@@ -154,11 +154,8 @@ fun AppNavigation(
 
         composable(NavigationRoutes.JOIN_GAME) {
             JoinGameScreen(
-                onJoinWithCode = { gameCode ->
-                    navController.navigate(
-                        NavigationRoutes.gameLobby(mode = "JOIN", gameCode = gameCode)
-                    )
-                }
+                navController = navController,
+                viewModel = viewModel
             )
         }
 
