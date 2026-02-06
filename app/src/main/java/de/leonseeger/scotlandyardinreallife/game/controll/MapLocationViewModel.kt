@@ -1,5 +1,6 @@
 package de.leonseeger.scotlandyardinreallife.game.controll
 
+import android.app.Application
 import android.content.Context
 import android.location.Location
 import androidx.lifecycle.AndroidViewModel
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class MapLocationViewModel(private val context: Context) : ViewModel() {
+class MapLocationViewModel(private val context: Application) : AndroidViewModel(context) {
 
     private val locationRepository = LocationRepository(context)
 
