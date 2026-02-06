@@ -63,7 +63,7 @@ fun GameLobbyScreen(
 
     LaunchedEffect(gameState?.status) {
         if (gameState?.status == GameStatus.RUNNING) {
-            onStartGame()
+            onStartGame(gameState!!, playerId);
         }
     }
 
