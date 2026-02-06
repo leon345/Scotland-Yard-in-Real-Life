@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.maplibre.geojson.Point
 
 class CreateGameViewModel(
     private val gameCatalogue: GameCatalogue, private val playerCatalogue: PlayerCatalogue
@@ -38,6 +39,9 @@ class CreateGameViewModel(
     private val _gameSettings = MutableStateFlow(GameSettings.DEFAULT)
     val gameSettings: StateFlow<GameSettings> = _gameSettings.asStateFlow()
 
+    private val _playArea = MutableStateFlow<List<Point>>(mutableListOf<Point>())
+    val playArea: StateFlow<List<Point>> = _playArea.asStateFlow()
+
     fun createGame(ownerId: String) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -54,7 +58,8 @@ class CreateGameViewModel(
                 status = GameStatus.WAITING,
                 players = listOf(owner),
                 owner = owner,
-                settings = _gameSettings.value
+                settings = _gameSettings.value,
+                polygon = playArea.value
             )
             val result = withContext(Dispatchers.IO) {
                 gameCatalogue.createGame(newGame)
@@ -201,5 +206,8 @@ class CreateGameViewModel(
         _error.value = null
     }
 
+    fun setPlayArea(poly: List<Point>) {
+        _playArea.value = poly
+    }
 }
 

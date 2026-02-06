@@ -1,18 +1,10 @@
-package de.leonseeger.scotlandyardinreallife.ui.components
+package de.leonseeger.scotlandyardinreallife.ui.component.gamemap
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import  android.content.Context
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.runtime.mutableStateOf
 import de.leonseeger.scotlandyardinreallife.BuildConfig
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.geometry.LatLng
@@ -25,32 +17,20 @@ import org.maplibre.android.style.layers.PropertyFactory.fillColor
 import org.maplibre.android.style.layers.PropertyFactory.fillOpacity
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Feature
+import org.maplibre.geojson.FeatureCollection
 import org.maplibre.geojson.Point
 import org.maplibre.geojson.Polygon
 
-class PlayMap {
+class PlayMapData {
     private val polygonMapSrcName = "playarea-src"
     private val polygonFillName = "playarea-fill"
 
     private lateinit var mapLibreMap: MapLibreMap
     private var polygonPoints = mutableListOf<Point>()
 
-    /*fun addPolyToMap(positions: Array<LatLng>) {
-        var poly = Polygon.fromLngLats(latLngToPointList(positions))
+    fun addPlayerPointToMap(loc: LatLng){
 
-        val geoSrc = GeoJsonSource("playarea-src", poly)
-        mapLibreMap.getStyle { style ->
-            if (style.removeSource(geoSrc))
-                Log.v("MAP-POLY", "Removed old poly src");
-            style.addSource(geoSrc)
-            val fill = FillLayer("playarea-fill", "playarea-src")
-                .withProperties(
-                    fillColor("#22ff00"),
-                    fillOpacity(0.5f)
-                )
-            style.addLayer(fill)
-        }
-    }*/
+    }
 
     fun addPolyPoint(coord: LatLng): Boolean {
         var polyFull = false
@@ -63,7 +43,9 @@ class PlayMap {
     }
 
     fun updatePolygon(style: Style): Boolean {
-        polygonPoints.add(polygonPoints.first()) //finishes polygon to full circle
+        if(polygonPoints.last() != polygonPoints.first())
+            polygonPoints.add(polygonPoints.first()) //finishes polygon to full circle if not already
+
         if (polygonPoints.size < 4) {
             // polygon to small
             Log.w("Polygon Making", "updatePolygon size: " + polygonPoints.size)
@@ -91,10 +73,34 @@ class PlayMap {
         return listOf(points)
     }
 
+    fun getPolygonPoints(): List<Point>{
+        return polygonPoints;
+    }
+
+    fun removeLastPolyPoint(){
+        if(polygonPoints.size > 3){
+            polygonPoints.removeAt(polygonPoints.size-2)
+            val newLast = polygonPoints.removeAt(polygonPoints.size-2)
+            addPolyPoint(LatLng(newLast.latitude(), newLast.longitude()))
+        }
+        else if(polygonPoints.isNotEmpty()){
+            polygonPoints.removeAt(polygonPoints.lastIndex)
+        }
+        //remove poly if not full poly
+        if(polygonPoints.size < 4){
+            mapLibreMap.getStyle{ style ->
+                run {
+                    val source = style.getSourceAs<GeoJsonSource>(polygonMapSrcName) ?: return@getStyle;
+                    source.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
+                }
+            }
+        }
+    }
+
     @Composable
     fun CustomMap(
         modifier: Modifier, lat: Double, lon: Double, appContext: Context,
-        onMapReady: (PlayMap) -> Unit
+        onMapReady: (PlayMapData) -> Unit
     ) {
         val mapOptions = MapLibreMapOptions.createFromAttributes(appContext)
         mapOptions.apply {

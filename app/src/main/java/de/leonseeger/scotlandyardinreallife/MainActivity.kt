@@ -1,8 +1,6 @@
 package de.leonseeger.scotlandyardinreallife
 
-import android.content.Context
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,8 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -22,10 +23,14 @@ import androidx.navigation.navArgument
 import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.game.CreateGameViewModelFactory
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.game.controll.RunningGameViewModel
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
-import de.leonseeger.scotlandyardinreallife.ui.components.PlayMap
+import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMap
+import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
+import de.leonseeger.scotlandyardinreallife.ui.screens.DefineMapScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameLobbyScreen
+import de.leonseeger.scotlandyardinreallife.ui.screens.GameRunningScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameSettingScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.JoinGameScreen
@@ -48,12 +53,12 @@ class MainActivity : ComponentActivity() {
         MapLibre.getInstance(this)
         enableEdgeToEdge()
         setContent {
-            val playMap = remember { PlayMap() }
+            val playMap = remember { PlayMapData() }
             ScotlandYardInRealLifeTheme {
-                /* PlayScreen(
-                     playMap = playMap,
-                     context = LocalContext.current
-                 )*/
+                /*PlayMap(
+                    playMap = playMap,
+                    context = LocalContext.current
+                )*/
                 navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavigation(
@@ -66,8 +71,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    //Für DEMO Location Service
-    /*override fun onCreate(savedInstanceState: Bundle?) {
+    /*//Für DEMO Location Service
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MapLibre.getInstance(this)
         enableEdgeToEdge()
@@ -97,35 +102,6 @@ class MainActivity : ComponentActivity() {
     }*/
 }
 
-@Composable
-fun PlayScreen(
-    playMap: PlayMap,
-    context: Context
-) {
-    playMap.CustomMap(
-        modifier = Modifier.fillMaxSize(),
-        lat = 52.2720,
-        lon = 8.0482,
-        appContext = context,
-        onMapReady = { map ->
-            /*var positions = arrayOf(
-                LatLng(52.267, 8.0532),
-                LatLng(52.272, 8.0575),
-                LatLng(52.281, 8.0432),
-                LatLng(52.273, 8.0402)
-            )*/
-            //map.addPolyToMap(positions);
-            map.getMapLibreMap().addOnMapClickListener { point ->
-                if (!map.addPolyPoint(point)) {
-                    Toast.makeText(context, "Polygon braucht mehr Punkte", Toast.LENGTH_SHORT)
-                        .show()
-                }
-                true
-            }
-        }
-    )
-}
-
 
 @Composable
 fun AppNavigation(
@@ -141,9 +117,7 @@ fun AppNavigation(
         composable(NavigationRoutes.HOME) {
             HomeScreen(
                 onCreateGame = {
-                    navController.navigate(
-                        NavigationRoutes.gameLobby(mode = "CREATE")
-                    )
+                    navController.navigate(NavigationRoutes.PRE_LOBBY)
                 },
                 onJoinGame = {
                     navController.navigate(NavigationRoutes.JOIN_GAME)
@@ -151,6 +125,16 @@ fun AppNavigation(
             )
         }
 
+        composable(NavigationRoutes.PRE_LOBBY) {
+            DefineMapScreen(
+                onMapDefined = { poly ->
+                    viewModel.setPlayArea(poly)
+                    navController.navigate(
+                        NavigationRoutes.gameLobby(mode = "CREATE")
+                    )
+                }
+            )
+        }
 
         composable(NavigationRoutes.JOIN_GAME) {
             JoinGameScreen(
@@ -173,6 +157,7 @@ fun AppNavigation(
             )
         ) { backStackEntry ->
             val mode = backStackEntry.arguments?.getString("mode") ?: "CREATE"
+
             val gameCode = backStackEntry.arguments?.getString("gameCode")
             val playerId = "0" //TODO nicht schön
 
@@ -181,8 +166,11 @@ fun AppNavigation(
                 mode = mode,
                 gameId = if (gameCode.isNullOrEmpty()) null else gameCode,
                 playerId = playerId,
-                onStartGame = {
+                playArea = null,
+                onStartGame = { game, currPlayerId ->
                     // TODO: Navigation zum aktiven Game Screen
+                    val runGameModel = RunningGameViewModel(gameState = game, currentPlayerId = currPlayerId)
+                    navController.navigate(NavigationRoutes.GAME_RUNNING)
                     navController.popBackStack(NavigationRoutes.HOME, inclusive = false)
                 },
                 onNavigateToSettings = {
@@ -198,6 +186,10 @@ fun AppNavigation(
                     navController.popBackStack()
                 }
             )
+        }
+
+        composable (NavigationRoutes.GAME_RUNNING){
+
         }
     }
 }

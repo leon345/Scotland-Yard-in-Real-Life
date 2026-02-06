@@ -18,6 +18,10 @@
     <string name="location_tracking_notification_title">Scotland Yard - GPS Tracking</string>
     <string name="location_tracking_notification_text">Your position is being tracked during the game</string>
 
+    <!-- Defining Play area -->
+    <string name="confirm">Confirm</string>
+    <string name="define_playarea" >Define play area</string>
+
     <string name="join_game_title">Join Game</string>
     <string name="game_code_label">Game Code</string>
     <string name="join_button">Join</string>
