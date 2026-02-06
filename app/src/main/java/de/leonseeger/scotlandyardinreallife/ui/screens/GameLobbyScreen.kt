@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.leonseeger.scotlandyardinreallife.R
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.ui.component.ErrorText
 import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
 import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle
@@ -54,6 +55,12 @@ fun GameLobbyScreen(
                 "CREATE" -> viewModel.createGame(playerId)
                 "JOIN" -> gameId?.let { viewModel.joinGame(it, playerId) }
             }
+        }
+    }
+
+    LaunchedEffect(gameState?.status) {
+        if (gameState?.status == GameStatus.RUNNING) {
+            onStartGame()
         }
     }
 
@@ -109,7 +116,6 @@ fun GameLobbyScreen(
                 PrimaryButton(
                     text = stringResource(R.string.start_game), onClick = {
                         viewModel.startGame()
-                        onStartGame()
                     }, enabled = players.size >= 2, icon = Icons.Default.PlayArrow
                 )
 
