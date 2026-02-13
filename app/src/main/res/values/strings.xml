@@ -21,4 +21,10 @@
     <!-- Defining Play area -->
     <string name="confirm">Confirm</string>
     <string name="define_playarea" >Define play area</string>
+
+    <string name="join_game_title">Join Game</string>
+    <string name="game_code_label">Game Code</string>
+    <string name="join_button">Join</string>
+    <string name="loading">Loading…</string>
+    <string name="invalid_game_code_error">The game code is invalid. </string>
 </resources>

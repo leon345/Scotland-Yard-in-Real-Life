@@ -9,10 +9,10 @@ Die Android-App soll das klassische Brettspiel Scotland Yard als Outdoor-Erlebni
 
 
 # Musskrieterien
-- Karten View erstellen
-- Ein Sielfeld auf der Karte definieren können. (Polygon)
-- Spieler können ein Spiel erstellen
-- Speiler können andere Spieler zu einem Spiel einladen
+- Karten View erstellen (Jannes)
+- Ein Sielfeld auf der Karte definieren können. (Polygon) Jannes
+- Spieler können ein Spiel erstellen (Leon)
+- Speiler können andere Spieler zu einem Spiel einladen (Leon)
     -  Per Link oder Code
 - Speilanpassungsmöglichkeiten:
     - Zeitintervall für den Banditen
