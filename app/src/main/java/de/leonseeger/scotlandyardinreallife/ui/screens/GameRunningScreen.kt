@@ -1,5 +1,6 @@
 package de.leonseeger.scotlandyardinreallife.ui.screens
 
+import RunningGameViewModel
 import android.location.Location
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -16,9 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.game.controll.LocationPermissionState
 import de.leonseeger.scotlandyardinreallife.game.controll.MapLocationViewModel
-import de.leonseeger.scotlandyardinreallife.game.controll.RunningGameViewModel
 import de.leonseeger.scotlandyardinreallife.ui.component.CenteredLoadingIndicator
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
 import org.maplibre.android.geometry.LatLng
@@ -28,9 +29,8 @@ import org.maplibre.android.geometry.LatLng
  */
 @Composable
 fun GameRunningScreen(
-    viewModel: RunningGameViewModel,
-    mapLocationModel: MapLocationViewModel = viewModel(),
-    currentPlayerId: String
+    viewModel: CreateGameViewModel,
+    mapLocationModel: MapLocationViewModel = viewModel()
 ) {
     val permissionGranted by mapLocationModel.permissionGranted.collectAsState()
 
@@ -43,7 +43,7 @@ fun GameRunningScreen(
     //switch action based on permission state
     when (permissionGranted) {
         LocationPermissionState.Granted -> { //show game screen
-            RunningGameScreenComponent(viewModel, mapLocationModel, currentPlayerId)
+            RunningGameScreenComponent(viewModel, mapLocationModel)
         }
 
         LocationPermissionState.RequestRequired -> { //ask for permission
@@ -62,31 +62,30 @@ fun GameRunningScreen(
 
 @Composable
 fun RunningGameScreenComponent(
-    viewModel: RunningGameViewModel,
-    mapLocationModel: MapLocationViewModel,
-    currentPlayerId: String
+    viewModel: CreateGameViewModel,
+    mapLocationModel: MapLocationViewModel
 ) {
     val lastLocation = mapLocationModel.currentLocation.collectAsState()
     LaunchedEffect(Unit) {
         mapLocationModel.loadCurrLocation()
     }
 
-    when (lastLocation) {
-        null -> CenteredLoadingIndicator(modifier = Modifier.padding(top = 100.dp))
-        else -> {
-            val playMapData = remember { PlayMapData() }
-            GameMap(lastLocation.value!!, mapData = playMapData, viewModel)
-        }
+    val gamestate by viewModel.gamestate.collectAsState()  // StateFlow oder LiveData
+
+    if (gamestate == null || lastLocation.value == null) {
+        CenteredLoadingIndicator(modifier = Modifier.padding(top = 100.dp))
+    } else {
+        val playMapData = remember { PlayMapData() }
+        GameMap(lastLocation.value!!, mapData = playMapData, viewModel)
+
+        // Polygon hinzufügen, nur wenn gamestate nicht null
+        val polygon = gamestate!!.polygon
+        // ... render polygon auf Map
     }
-
-    //TODO ADD MAP COMPOSABLE, SPAWN DEFAULT ON LAST LOCATION FROM mapLocationModel
-    //TODO ADD POLYGON
-    //TODO ADD BLIPS
-
 }
 
 @Composable
-fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: RunningGameViewModel){
+fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGameViewModel){
     Box(){
         mapData.CustomMap(
             modifier = Modifier.fillMaxSize(),

@@ -1,5 +1,6 @@
 package de.leonseeger.scotlandyardinreallife
 
+import RunningGameViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -23,8 +25,8 @@ import androidx.navigation.navArgument
 import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.game.CreateGameViewModelFactory
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
-import de.leonseeger.scotlandyardinreallife.game.controll.RunningGameViewModel
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
+import de.leonseeger.scotlandyardinreallife.game.gateway.RunningGameViewModelFactory
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMap
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
@@ -36,6 +38,7 @@ import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.JoinGameScreen
 import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
 import org.maplibre.android.MapLibre
+import kotlin.getValue
 
 class MainActivity : ComponentActivity() {
     private val firebaseGateway = FirebaseGateway(FirebaseFirestore.getInstance())
@@ -64,7 +67,8 @@ class MainActivity : ComponentActivity() {
                     AppNavigation(
                         navController = navController,
                         viewModel = gameLobbyViewModel,
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding),
+                        firebaseGateway = firebaseGateway
                     )
                 }
             }
@@ -107,7 +111,8 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation(
     navController: NavHostController,
     viewModel: CreateGameViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    firebaseGateway: FirebaseGateway,
 ) {
     NavHost(
         navController = navController,
@@ -168,10 +173,7 @@ fun AppNavigation(
                 playerId = playerId,
                 playArea = null,
                 onStartGame = { game, currPlayerId ->
-                    // TODO: Navigation zum aktiven Game Screen
-                    val runGameModel = RunningGameViewModel(gameState = game, currentPlayerId = currPlayerId)
                     navController.navigate(NavigationRoutes.GAME_RUNNING)
-                    navController.popBackStack(NavigationRoutes.HOME, inclusive = false)
                 },
                 onNavigateToSettings = {
                     navController.navigate(NavigationRoutes.GAME_SETTINGS)
@@ -188,8 +190,12 @@ fun AppNavigation(
             )
         }
 
-        composable (NavigationRoutes.GAME_RUNNING){
-
+        composable(
+            NavigationRoutes.GAME_RUNNING
+        ) {
+            GameRunningScreen(
+                viewModel = viewModel
+            )
         }
     }
 }

@@ -1,21 +1,30 @@
-package de.leonseeger.scotlandyardinreallife.game.controll
-
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import de.leonseeger.scotlandyardinreallife.game.entity.Game
+import de.leonseeger.scotlandyardinreallife.game.entity.GameCatalogue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
+class RunningGameViewModel(
+    private val gameId: String,
+    private val playerId: String,
+    private val gameCatalogue: GameCatalogue
+) : ViewModel() {
 
-class RunningGameViewModel( gameState: Game, currentPlayerId: String): ViewModel() {
-    private val _gameState = MutableStateFlow<Game?>(gameState)
-    val gamestate = _gameState.asStateFlow()
+    private val _gameState = MutableStateFlow<Game?>(null)
+    val gamestate: StateFlow<Game?> = _gameState.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    init {
+        observeGame()
+    }
 
-    private val _currentPlayerId = MutableStateFlow(currentPlayerId)
-    var currentPlayerId = _currentPlayerId.asStateFlow()
-
-
+    private fun observeGame() {
+        viewModelScope.launch {
+            gameCatalogue.getGameById(gameId).collect {
+                _gameState.value = it
+            }
+        }
+    }
 }

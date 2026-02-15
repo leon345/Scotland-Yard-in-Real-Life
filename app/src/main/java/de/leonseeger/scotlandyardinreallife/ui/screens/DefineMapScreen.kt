@@ -115,6 +115,7 @@ fun PlayareaDefinitionMap(
                         Toast.makeText(context, "Polygon braucht mehr Punkte", Toast.LENGTH_SHORT)
                             .show()
                     }
+                    map.addMarker(point);
                     true
                 }
             }
