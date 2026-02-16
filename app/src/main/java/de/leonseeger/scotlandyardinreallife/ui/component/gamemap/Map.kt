@@ -21,6 +21,7 @@ import org.maplibre.android.style.layers.PropertyFactory.fillOpacity
 import org.maplibre.android.style.layers.PropertyFactory.iconAllowOverlap
 import org.maplibre.android.style.layers.PropertyFactory.iconIgnorePlacement
 import org.maplibre.android.style.layers.PropertyFactory.iconImage
+import org.maplibre.android.style.layers.PropertyValue
 import org.maplibre.android.style.layers.SymbolLayer
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Feature
@@ -41,13 +42,13 @@ class PlayMapData {
 
     }
 
-    fun addPolyPoint(coord: LatLng): Boolean {
+    fun addPolyPoint(coord: LatLng, inverted: Boolean = false): Boolean {
         var polyFull = false
         if(polygonPoints.isNotEmpty()) {
             polygonPoints.removeAt(polygonPoints.lastIndexOf(polygonPoints.first()))
         }
         polygonPoints.add(Point.fromLngLat(coord.longitude, coord.latitude))
-        mapLibreMap.getStyle{ style -> polyFull = updatePolygon(style) }
+        mapLibreMap.getStyle{ style -> polyFull = updatePolygon(style, inverted) }
         return polyFull
     }
 
@@ -63,7 +64,7 @@ class PlayMapData {
         }
     }
 
-    fun updatePolygon(style: Style): Boolean {
+    fun updatePolygon(style: Style, invert: Boolean = false): Boolean {
         polygonPoints.add(polygonPoints.first())
 
         if (polygonPoints.size < 4) {
@@ -72,9 +73,22 @@ class PlayMapData {
             return false;
         }
 
-        val source = style.getSourceAs<GeoJsonSource>(polygonMapSrcName) ?: return false;
-        val polygon = Polygon.fromLngLats(listOf(polygonPoints))
-        source.setGeoJson(Feature.fromGeometry(polygon))
+        val source = style.getSourceAs<GeoJsonSource>(polygonMapSrcName) ?: return false
+        val poly: Polygon
+        if(!invert){
+            poly = Polygon.fromLngLats(listOf(polygonPoints))
+        }
+        else{
+            val inverter = listOf(
+                Point.fromLngLat(-179.9, -85.0),
+                Point.fromLngLat(179.9, -85.0),
+                Point.fromLngLat(179.9, 85.0),
+                Point.fromLngLat(-179.9, 85.0),
+                Point.fromLngLat(-179.9, -85.0)
+            )
+            poly = Polygon.fromLngLats(listOf(inverter, polygonPoints))
+        }
+        source.setGeoJson(Feature.fromGeometry(poly))
         return true
     }
 
@@ -126,7 +140,11 @@ class PlayMapData {
 
     @Composable
     fun CustomMap(
-        modifier: Modifier, lat: Double, lon: Double, appContext: Context,
+        modifier: Modifier,
+        lat: Double,
+        lon: Double,
+        appContext: Context,
+        invert: Boolean = false,
         onMapReady: (PlayMapData) -> Unit
     ) {
         val mapOptions = MapLibreMapOptions.createFromAttributes(appContext)
@@ -154,12 +172,28 @@ class PlayMapData {
                 mapLibreMap = map
                 mapLibreMap.setStyle(BuildConfig.MAPTILER_API_PATH){ style ->
                     //sets style of polygon fill and links list of points
-                    val poly = Polygon.fromLngLats(listOf(polygonPoints))
+                    val poly: Polygon
+                    val fillColor: PropertyValue<String>
+                    if(!invert){
+                        poly = Polygon.fromLngLats(listOf(polygonPoints))
+                        fillColor = fillColor("#22ff00")
+                    }
+                    else{
+                        val inverter = listOf(
+                            Point.fromLngLat(-179.9, -85.0),
+                            Point.fromLngLat(179.9, -85.0),
+                            Point.fromLngLat(179.9, 85.0),
+                            Point.fromLngLat(-179.9, 85.0),
+                            Point.fromLngLat(-179.9, -85.0)
+                        )
+                        poly = Polygon.fromLngLats(listOf(inverter, polygonPoints))
+                        fillColor = fillColor("#B3402E")
+                    }
                     val polySrc = GeoJsonSource(polygonMapSrcName, poly)
                     style.addSource(polySrc)
                     val fill = FillLayer(polygonFillName, polygonMapSrcName)
                         .withProperties(
-                            fillColor("#22ff00"),
+                            fillColor,
                             fillOpacity(0.5f)
                         )
                     style.addLayer(fill)
@@ -180,8 +214,8 @@ class PlayMapData {
                         )
 
                     style.addLayer(layer)
+                    onMapReady(this)
                 }
-                onMapReady(this)
             }
         }
     }

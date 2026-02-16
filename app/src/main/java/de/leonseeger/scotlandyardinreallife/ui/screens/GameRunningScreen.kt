@@ -2,6 +2,7 @@ package de.leonseeger.scotlandyardinreallife.ui.screens
 
 import RunningGameViewModel
 import android.location.Location
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -77,10 +78,6 @@ fun RunningGameScreenComponent(
     } else {
         val playMapData = remember { PlayMapData() }
         GameMap(lastLocation.value!!, mapData = playMapData, viewModel)
-
-        // Polygon hinzufügen, nur wenn gamestate nicht null
-        val polygon = gamestate!!.polygon
-        // ... render polygon auf Map
     }
 }
 
@@ -91,13 +88,18 @@ fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGame
             modifier = Modifier.fillMaxSize(),
             lat = startLocation.latitude,
             lon = startLocation.longitude,
+            invert = true,
             appContext = LocalContext.current,
             onMapReady = { map ->
-                val polygon = viewModel.gamestate.value!!.polygon
-                for(poly in polygon){
-                    map.addPolyPoint(LatLng(poly.latitude(), poly.longitude()))
+                Log.w("Map", "Map ready")
+                val polygon = viewModel.gamestate.value?.polygon
+                if(polygon != null){
+                    Log.w("Map", "Poly not null")
+                    for(poly in polygon){
+                        Log.w("Map", "Adding Poly to map")
+                        map.addPolyPoint(LatLng(poly.latitude(), poly.longitude()), true)
+                    }
                 }
-                //TODO Add poly to map.
             }
         )
     }
