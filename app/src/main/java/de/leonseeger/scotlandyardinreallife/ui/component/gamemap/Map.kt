@@ -1,24 +1,30 @@
 package de.leonseeger.scotlandyardinreallife.ui.component.gamemap
 
+import android.R.attr.bitmap
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import  android.content.Context
 import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.res.ResourcesCompat
 import de.leonseeger.scotlandyardinreallife.BuildConfig
 import de.leonseeger.scotlandyardinreallife.R
+import de.leonseeger.scotlandyardinreallife.game.entity.Player
+import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapLibreMapOptions
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
+import org.maplibre.android.style.expressions.Expression
 import org.maplibre.android.style.layers.FillLayer
 import org.maplibre.android.style.layers.PropertyFactory.fillColor
 import org.maplibre.android.style.layers.PropertyFactory.fillOpacity
 import org.maplibre.android.style.layers.PropertyFactory.iconAllowOverlap
+import org.maplibre.android.style.layers.PropertyFactory.iconColor
 import org.maplibre.android.style.layers.PropertyFactory.iconIgnorePlacement
 import org.maplibre.android.style.layers.PropertyFactory.iconImage
 import org.maplibre.android.style.layers.PropertyValue
@@ -38,8 +44,23 @@ class PlayMapData {
     private var polygonPoints = mutableListOf<Point>()
     private var markers = mutableListOf<Feature>()
 
-    fun addPlayerPointToMap(loc: LatLng){
+    fun updatePlayers(players: List<Player>) {
+        val style = mapLibreMap.style ?: return
+        val source = style.getSourceAs<GeoJsonSource>("players-source") ?: return
 
+        val features = players
+            .filter { it.currentLocation != null }
+            .map { player ->
+                Log.d("Player", "" + player.currentLocation!!.longitude + " " + player.currentLocation.latitude)
+                Feature.fromGeometry(
+                    Point.fromLngLat(player.currentLocation!!.longitude, player.currentLocation!!.latitude)
+                ).apply {
+                    addStringProperty("icon", if (player.role == PlayerRole.BANDIT) "bandit-icon" else "detective-icon")
+                    addStringProperty("color", if (player.role == PlayerRole.BANDIT) "#FF0000" else "#0000FF")
+                }
+            }
+
+        source.setGeoJson(FeatureCollection.fromFeatures(features))
     }
 
     fun addPolyPoint(coord: LatLng, inverted: Boolean = false): Boolean {
@@ -172,23 +193,12 @@ class PlayMapData {
                 mapLibreMap = map
                 mapLibreMap.setStyle(BuildConfig.MAPTILER_API_PATH){ style ->
                     //sets style of polygon fill and links list of points
-                    val poly: Polygon
+                    val poly = Polygon.fromLngLats(listOf(polygonPoints))
                     val fillColor: PropertyValue<String>
-                    if(!invert){
-                        poly = Polygon.fromLngLats(listOf(polygonPoints))
+                    if(!invert)
                         fillColor = fillColor("#22ff00")
-                    }
-                    else{
-                        val inverter = listOf(
-                            Point.fromLngLat(-179.9, -85.0),
-                            Point.fromLngLat(179.9, -85.0),
-                            Point.fromLngLat(179.9, 85.0),
-                            Point.fromLngLat(-179.9, 85.0),
-                            Point.fromLngLat(-179.9, -85.0)
-                        )
-                        poly = Polygon.fromLngLats(listOf(inverter, polygonPoints))
+                    else
                         fillColor = fillColor("#B3402E")
-                    }
                     val polySrc = GeoJsonSource(polygonMapSrcName, poly)
                     style.addSource(polySrc)
                     val fill = FillLayer(polygonFillName, polygonMapSrcName)
@@ -198,22 +208,38 @@ class PlayMapData {
                         )
                     style.addLayer(fill)
 
-
                     style.addImage(
                         "marker-icon",
                         BitmapFactory.decodeResource(appContext.resources, R.drawable.maplibre_marker_icon_default)
                     )
-
+                    /*---Marker Layer---*/
                     val markerSrc = GeoJsonSource(markerSrcName)
                     style.addSource(markerSrc)
-                    val layer = SymbolLayer("marker-layer", "marker-source")
+                    val symbolLayer = SymbolLayer("marker-layer", "marker-source")
                         .withProperties(
                             iconImage("marker-icon"),
                             iconAllowOverlap(true),
                             iconIgnorePlacement(true)
                         )
+                    style.addLayer(symbolLayer)
+                    /*---Player Layer---*/
+                    val playerSource = GeoJsonSource("players-source")
+                    style.addSource(playerSource)
 
-                    style.addLayer(layer)
+                    val banditBitmap = BitmapFactory.decodeResource(appContext.resources, R.drawable.mask)
+                    val detectiveBitmap = BitmapFactory.decodeResource(appContext.resources, R.drawable.siren)
+                    style.addImage("bandit-icon", banditBitmap, true)      // SDF enabled
+                    style.addImage("detective-icon", detectiveBitmap, true) // SDF enabled
+
+                    val playerLayer = SymbolLayer("players-layer", "players-source")
+                        .withProperties(
+                            iconImage(Expression.get("icon")),
+                            iconAllowOverlap(true),
+                            iconIgnorePlacement(true),
+                            iconColor(Expression.get("color"))
+                        )
+                    style.addLayer(playerLayer)
+
                     onMapReady(this)
                 }
             }
