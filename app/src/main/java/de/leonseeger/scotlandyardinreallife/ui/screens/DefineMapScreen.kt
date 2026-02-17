@@ -173,7 +173,7 @@ fun PlayareaDefinitionMap(
             Button(
                 onClick = {
                     val polygon = mapData.getPolygonPoints()
-                    if (polygon.size > 4)
+                    if (polygon.size > 3)
                         onMapDefined(polygon)
                     else
                         Toast.makeText(context, "Polygon braucht mehr Punkte", Toast.LENGTH_SHORT)

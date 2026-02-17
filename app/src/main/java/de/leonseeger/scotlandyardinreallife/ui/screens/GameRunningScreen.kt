@@ -9,9 +9,13 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,14 +23,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import de.leonseeger.scotlandyardinreallife.R
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.game.controll.LocationPermissionState
-import de.leonseeger.scotlandyardinreallife.game.controll.LocationService
 import de.leonseeger.scotlandyardinreallife.game.controll.MapLocationViewModel
+import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
 import de.leonseeger.scotlandyardinreallife.ui.component.CenteredLoadingIndicator
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
 import org.maplibre.android.geometry.LatLng
@@ -66,7 +78,7 @@ fun GameRunningScreen(
             }
         }
 
-        LocationPermissionState.Denied -> { //permission denied
+        LocationPermissionState.Denied -> {
             PermissionDeniedScreen()
         }
     }
@@ -97,6 +109,8 @@ fun RunningGameScreenComponent(
 fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGameViewModel){
     val players by viewModel.players.collectAsState()
     var mapReady by remember { mutableStateOf(false) }
+    val playerRole: PlayerRole = viewModel.getCurrPlayerRole()
+
 
     Box(){
         mapData.CustomMap(
@@ -118,6 +132,36 @@ fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGame
                 }
             }
         )
+        Box(modifier = Modifier
+            .align(Alignment.TopEnd)
+            .padding(top = 12.dp)){
+            Box(
+                modifier = Modifier
+                    .border(
+                        2.dp,
+                        colorResource(R.color.dark),
+                        RoundedCornerShape(8.dp)
+                    )
+                    .clip(RoundedCornerShape(8.dp))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .blur(12.dp)
+                        .background(
+                            colorResource(R.color.red_bright),
+                            RoundedCornerShape(8.dp)
+                        )
+                        .matchParentSize()
+                )
+                Text(
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                    color = colorResource(R.color.dark),
+                    text = stringResource(R.string.bandit),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
     }
 
     if (mapReady) {

@@ -25,8 +25,13 @@ import org.maplibre.android.style.layers.PropertyFactory.fillColor
 import org.maplibre.android.style.layers.PropertyFactory.fillOpacity
 import org.maplibre.android.style.layers.PropertyFactory.iconAllowOverlap
 import org.maplibre.android.style.layers.PropertyFactory.iconColor
+import org.maplibre.android.style.layers.PropertyFactory.iconHaloBlur
+import org.maplibre.android.style.layers.PropertyFactory.iconHaloColor
+import org.maplibre.android.style.layers.PropertyFactory.iconHaloWidth
 import org.maplibre.android.style.layers.PropertyFactory.iconIgnorePlacement
 import org.maplibre.android.style.layers.PropertyFactory.iconImage
+import org.maplibre.android.style.layers.PropertyFactory.iconOpacity
+import org.maplibre.android.style.layers.PropertyFactory.iconSize
 import org.maplibre.android.style.layers.PropertyValue
 import org.maplibre.android.style.layers.SymbolLayer
 import org.maplibre.android.style.sources.GeoJsonSource
@@ -56,7 +61,8 @@ class PlayMapData {
                     Point.fromLngLat(player.currentLocation!!.longitude, player.currentLocation!!.latitude)
                 ).apply {
                     addStringProperty("icon", if (player.role == PlayerRole.BANDIT) "bandit-icon" else "detective-icon")
-                    addStringProperty("color", if (player.role == PlayerRole.BANDIT) "#FF0000" else "#0000FF")
+                    addStringProperty("color", if (player.role == PlayerRole.BANDIT) "#FF4539" else "#226AF0")
+                    addStringProperty("haloColor", if (player.role == PlayerRole.BANDIT) "#D55B52" else "#3C6CC5")
                 }
             }
 
@@ -133,11 +139,11 @@ class PlayMapData {
     }
 
     fun removeLastPolyPoint(){
-        if(polygonPoints.size > 3){
-            polygonPoints.removeAt(polygonPoints.size-2)
-            val newLast = polygonPoints.removeAt(polygonPoints.size-2)
+        if(polygonPoints.size > 2){
+            polygonPoints.removeAt(polygonPoints.lastIndex-1)
+            val newLast = polygonPoints.removeAt(polygonPoints.lastIndex-1)
 
-            markers.removeLast()
+            markers.removeAt(markers.lastIndex)
             val markerSrc = mapLibreMap.style?.getSourceAs<GeoJsonSource>(markerSrcName)
             markerSrc?.setGeoJson(FeatureCollection.fromFeatures(markers))
 
@@ -146,7 +152,8 @@ class PlayMapData {
         else if(polygonPoints.isNotEmpty()){
             polygonPoints.removeAt(polygonPoints.lastIndex)
 
-            markers.removeLast()
+            if(markers.isNotEmpty())
+                markers.removeAt(markers.lastIndex)
             val markerSrc = mapLibreMap.style?.getSourceAs<GeoJsonSource>(markerSrcName)
             markerSrc?.setGeoJson(FeatureCollection.fromFeatures(markers))
         }
@@ -222,14 +229,15 @@ class PlayMapData {
                             iconIgnorePlacement(true)
                         )
                     style.addLayer(symbolLayer)
+
                     /*---Player Layer---*/
                     val playerSource = GeoJsonSource("players-source")
                     style.addSource(playerSource)
 
                     val banditBitmap = BitmapFactory.decodeResource(appContext.resources, R.drawable.mask)
                     val detectiveBitmap = BitmapFactory.decodeResource(appContext.resources, R.drawable.siren)
-                    style.addImage("bandit-icon", banditBitmap, true)      // SDF enabled
-                    style.addImage("detective-icon", detectiveBitmap, true) // SDF enabled
+                    style.addImage("bandit-icon", banditBitmap, true)
+                    style.addImage("detective-icon", detectiveBitmap, true)
 
                     val playerLayer = SymbolLayer("players-layer", "players-source")
                         .withProperties(
@@ -238,6 +246,19 @@ class PlayMapData {
                             iconIgnorePlacement(true),
                             iconColor(Expression.get("color"))
                         )
+
+                    val haloBitmap = BitmapFactory.decodeResource(appContext.resources, R.drawable.halo)
+                    style.addImage("player-bg", haloBitmap, true)
+                    val haloLayer = SymbolLayer("players-halo", "players-source")
+                        .withProperties(
+                            iconImage("player-bg"),
+                            iconColor(Expression.get("haloColor")),
+                            iconSize(0.8f),
+                            iconOpacity(0.3f),
+                            iconAllowOverlap(true),
+                            iconIgnorePlacement(true)
+                        )
+                    style.addLayer(haloLayer)
                     style.addLayer(playerLayer)
 
                     onMapReady(this)

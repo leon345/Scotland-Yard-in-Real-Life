@@ -98,6 +98,13 @@ class CreateGameViewModel(
 
     }
 
+    fun getCurrPlayerRole(): PlayerRole{
+        val currPlayer = players.value.find { player -> player.id == currentPlayerId.value }
+        if(currPlayer != null)
+            return currPlayer.role
+        return PlayerRole.DETECTIVE
+    }
+
     fun observeGame(gameId: String) {
         viewModelScope.launch {
             try {

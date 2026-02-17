@@ -32,4 +32,5 @@
     <!-- Defining Play area -->
     <string name="confirm">Bestätigen</string>
     <string name="define_playarea">Spielbereich festlegen</string>
+    <string name="bandit">Bandit</string>
 </resources>

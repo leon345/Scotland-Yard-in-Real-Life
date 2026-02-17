@@ -173,6 +173,7 @@ fun AppNavigation(
                 playerId = playerId,
                 playArea = null,
                 onStartGame = { game, currPlayerId ->
+                    //TODO start location service here?
                     navController.navigate(NavigationRoutes.GAME_RUNNING)
                 },
                 onNavigateToSettings = {
@@ -193,6 +194,7 @@ fun AppNavigation(
         composable(
             NavigationRoutes.GAME_RUNNING
         ) {
+            //TODO start location service here?
             GameRunningScreen(
                 viewModel = viewModel
             )
