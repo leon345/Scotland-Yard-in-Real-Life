@@ -13,7 +13,7 @@ object NavigationRoutes {
         return "game_lobby/$mode/$gameCode"
     }
 
-    fun gameRunning(){
-
+    fun gameRunning(gameId: String, playerId: String): String {
+        return "game_running/$gameId/$playerId"
     }
 }

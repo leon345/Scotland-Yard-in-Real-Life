@@ -282,7 +282,7 @@ private fun requestLocationPermissions(
     launcher.launch(permissions.toTypedArray())
 }
 
-private fun startLocationService(context: Context, gameId: String, playerId: String) {
+fun startLocationService(context: Context, gameId: String, playerId: String) {
     val serviceIntent = Intent(context, LocationService::class.java).apply {
         putExtra(LocationService.EXTRA_GAME_ID, gameId)
         putExtra(LocationService.EXTRA_PLAYER_ID, playerId)
