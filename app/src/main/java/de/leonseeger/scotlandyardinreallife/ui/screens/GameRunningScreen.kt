@@ -1,6 +1,5 @@
 package de.leonseeger.scotlandyardinreallife.ui.screens
 
-import RunningGameViewModel
 import android.content.Context
 import android.content.Intent
 import android.location.Location
@@ -63,10 +62,16 @@ fun GameRunningScreen(
     //switch action based on permission state
     when (permissionGranted) {
         LocationPermissionState.Granted -> { //show game screen
+            /*Launching location service */
             val gameId = game.value?.id
             val playerId = currPlayerId.value
+            val context = LocalContext.current
             if(gameId != null && playerId != null)
-                startLocationService(LocalContext.current, gameId, playerId)
+                LaunchedEffect(Unit) {
+                    startLocationService(context, gameId, playerId)
+                    Log.d("Location Service", "Started Location Service")
+                }
+            /*-------*/
             RunningGameScreenComponent(viewModel, mapLocationModel)
         }
 
@@ -94,8 +99,7 @@ fun RunningGameScreenComponent(
     LaunchedEffect(Unit) {
         mapLocationModel.loadCurrLocation()
     }
-
-    val gamestate by viewModel.gamestate.collectAsState()  // StateFlow oder LiveData
+    val gamestate by viewModel.gamestate.collectAsState()
 
     if (gamestate == null || lastLocation.value == null) {
         CenteredLoadingIndicator(modifier = Modifier.padding(top = 100.dp))
@@ -110,7 +114,6 @@ fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGame
     val players by viewModel.players.collectAsState()
     var mapReady by remember { mutableStateOf(false) }
     val playerRole: PlayerRole = viewModel.getCurrPlayerRole()
-
 
     Box(){
         mapData.CustomMap(

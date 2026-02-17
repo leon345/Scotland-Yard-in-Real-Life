@@ -1,6 +1,5 @@
 package de.leonseeger.scotlandyardinreallife
 
-import RunningGameViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,7 +25,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.game.CreateGameViewModelFactory
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
-import de.leonseeger.scotlandyardinreallife.game.gateway.RunningGameViewModelFactory
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMap
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
@@ -36,6 +34,7 @@ import de.leonseeger.scotlandyardinreallife.ui.screens.GameRunningScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameSettingScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.JoinGameScreen
+import de.leonseeger.scotlandyardinreallife.ui.screens.startLocationService
 import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
 import org.maplibre.android.MapLibre
 import kotlin.getValue
