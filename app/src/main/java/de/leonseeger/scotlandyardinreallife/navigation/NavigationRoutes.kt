@@ -8,6 +8,7 @@ object NavigationRoutes {
     const val GAME_LOBBY = "game_lobby/{mode}/{gameCode}"
     const val GAME_SETTINGS = "game_settings"
     const val GAME_RUNNING = "game_running"
+    const val GAME_END = "game_end"
 
     fun gameLobby(mode: String, gameCode: String = ""): String {
         return "game_lobby/$mode/$gameCode"

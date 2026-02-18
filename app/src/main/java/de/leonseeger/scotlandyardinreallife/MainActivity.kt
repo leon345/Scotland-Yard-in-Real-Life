@@ -29,6 +29,7 @@ import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMap
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
 import de.leonseeger.scotlandyardinreallife.ui.screens.DefineMapScreen
+import de.leonseeger.scotlandyardinreallife.ui.screens.GameEndScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameLobbyScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameRunningScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameSettingScreen
@@ -171,8 +172,7 @@ fun AppNavigation(
                 gameId = if (gameCode.isNullOrEmpty()) null else gameCode,
                 playerId = playerId,
                 playArea = null,
-                onStartGame = { game, currPlayerId ->
-                    //TODO start location service here?
+                onStartGame = { ->
                     navController.navigate(NavigationRoutes.GAME_RUNNING)
                 },
                 onNavigateToSettings = {
@@ -193,9 +193,21 @@ fun AppNavigation(
         composable(
             NavigationRoutes.GAME_RUNNING
         ) {
-            //TODO start location service here?
             GameRunningScreen(
-                viewModel = viewModel
+                viewModel = viewModel,
+                onGameEnd = {
+                    navController.navigate(NavigationRoutes.GAME_END)
+                }
+            )
+        }
+
+        composable(
+            NavigationRoutes.GAME_END
+        ) {
+            GameEndScreen(
+                onBackHome = {
+                    navController.navigate(NavigationRoutes.HOME)
+                }
             )
         }
     }

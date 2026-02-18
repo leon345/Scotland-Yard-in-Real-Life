@@ -11,10 +11,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,19 +29,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.leonseeger.scotlandyardinreallife.R
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.game.controll.LocationPermissionState
 import de.leonseeger.scotlandyardinreallife.game.controll.MapLocationViewModel
+import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
 import de.leonseeger.scotlandyardinreallife.ui.component.CenteredLoadingIndicator
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
@@ -48,11 +59,19 @@ import org.maplibre.android.geometry.LatLng
 @Composable
 fun GameRunningScreen(
     viewModel: CreateGameViewModel,
-    mapLocationModel: MapLocationViewModel = viewModel()
+    mapLocationModel: MapLocationViewModel = viewModel(),
+    onGameEnd: () -> Unit = {}
 ) {
     val permissionGranted by mapLocationModel.permissionGranted.collectAsState()
-    val game = viewModel.gamestate.collectAsState()
-    val currPlayerId = viewModel.currentPlayerId.collectAsState()
+    val game by viewModel.gamestate.collectAsState()
+    val currPlayerId by viewModel.currentPlayerId.collectAsState()
+
+    LaunchedEffect(game?.status) {
+        if (game?.status == GameStatus.FINISHED) {
+            onGameEnd()
+        }
+    }
+
     val permissionLauncher =
         rememberLauncherForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -63,10 +82,10 @@ fun GameRunningScreen(
     when (permissionGranted) {
         LocationPermissionState.Granted -> { //show game screen
             /*Launching location service */
-            val gameId = game.value?.id
-            val playerId = currPlayerId.value
+            val gameId = game?.id
+            val playerId = currPlayerId
             val context = LocalContext.current
-            if(gameId != null && playerId != null)
+            if (gameId != null && playerId != null)
                 LaunchedEffect(Unit) {
                     startLocationService(context, gameId, playerId)
                     Log.d("Location Service", "Started Location Service")
@@ -95,27 +114,33 @@ fun RunningGameScreenComponent(
     viewModel: CreateGameViewModel,
     mapLocationModel: MapLocationViewModel
 ) {
-    val lastLocation = mapLocationModel.currentLocation.collectAsState()
+    val lastLocation by mapLocationModel.currentLocation.collectAsState()
     LaunchedEffect(Unit) {
         mapLocationModel.loadCurrLocation()
     }
     val gamestate by viewModel.gamestate.collectAsState()
 
-    if (gamestate == null || lastLocation.value == null) {
+    if (gamestate == null || lastLocation == null) {
         CenteredLoadingIndicator(modifier = Modifier.padding(top = 100.dp))
     } else {
         val playMapData = remember { PlayMapData() }
-        GameMap(lastLocation.value!!, mapData = playMapData, viewModel)
+        GameMap(lastLocation!!, mapData = playMapData, viewModel)
     }
 }
 
 @Composable
-fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGameViewModel){
+fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGameViewModel) {
+    var openEndDialog = remember { mutableStateOf(false) }
+
     val players by viewModel.players.collectAsState()
     var mapReady by remember { mutableStateOf(false) }
     val playerRole: PlayerRole = viewModel.getCurrPlayerRole()
+    val playerColor = if (playerRole == PlayerRole.BANDIT) colorResource(R.color.bandit_color)
+    else colorResource(R.color.detective_color)
+    val playerBgColor = if (playerRole == PlayerRole.BANDIT) colorResource(R.color.bandit_color_bg)
+    else colorResource(R.color.detective_color_bg)
 
-    Box(){
+    Box() {
         mapData.CustomMap(
             modifier = Modifier.fillMaxSize(),
             lat = startLocation.latitude,
@@ -126,18 +151,21 @@ fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGame
                 Log.w("Map", "Map ready")
                 mapReady = true
                 val polygon = viewModel.gamestate.value?.polygon
-                if(polygon != null){
+                if (polygon != null) {
                     Log.w("Map", "Poly not null")
-                    for(poly in polygon){
+                    for (poly in polygon) {
                         Log.w("Map", "Adding Poly to map")
                         map.addPolyPoint(LatLng(poly.latitude(), poly.longitude()), true)
                     }
                 }
             }
         )
-        Box(modifier = Modifier
-            .align(Alignment.TopEnd)
-            .padding(top = 12.dp)){
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp)
+        ) {
+            /*---Start Role Box---*/
             Box(
                 modifier = Modifier
                     .border(
@@ -151,19 +179,44 @@ fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGame
                     modifier = Modifier
                         .blur(12.dp)
                         .background(
-                            colorResource(R.color.red_bright),
-                            RoundedCornerShape(8.dp)
+                            playerBgColor,
+                            RoundedCornerShape(8.dp),
                         )
                         .matchParentSize()
                 )
                 Text(
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                    color = colorResource(R.color.dark),
-                    text = stringResource(R.string.bandit),
+                    color = playerColor,
+                    text = playerRole.name,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium
                 )
             }
+            /*---End Role Box---*/
+            /*---Start Controls---*/
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 20.dp)
+            ) {
+                if (playerRole == PlayerRole.BANDIT) {
+                    Button(
+                        colors = ButtonColors(
+                            colorResource(R.color.detective_color_dark),
+                            contentColor = colorResource(R.color.neon_yellow),
+                            disabledContainerColor = colorResource(R.color.grey),
+                            disabledContentColor = colorResource(R.color.black)
+                        ),
+                        onClick = {
+                            //TODO Execute found actions
+                            openEndDialog.value = true
+                        },
+                    ) {
+                        Text(stringResource(R.string.found), fontSize = 18.sp)
+                    }
+                }
+            }
+
         }
     }
 
@@ -172,4 +225,64 @@ fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGame
             mapData.updatePlayers(players)
         }
     }
+
+    when {
+        openEndDialog.value -> {
+            EndGameDialog(
+                onDismissRequest = { openEndDialog.value = false },
+                onConfirmation = {
+                    openEndDialog.value = false
+                    viewModel.endGame()
+                },
+                title = "Spiel beenden?",
+                content = stringResource(R.string.foud_question)
+            )
+        }
+    }
+}
+
+@Composable
+fun EndGameDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    title: String,
+    content: String
+) {
+    AlertDialog(
+        title = { Text(text = title) },
+        text = { Text(text = content) },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                colors = ButtonColors(
+                    colorResource(R.color.detective_color_dark),
+                    contentColor = colorResource(R.color.neon_yellow),
+                    disabledContainerColor = colorResource(R.color.grey),
+                    disabledContentColor = colorResource(R.color.black)
+                ),
+                onClick = {
+                    onConfirmation()
+                }
+            ) {
+                Text(stringResource(R.string.confirm_found))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                colors = ButtonColors(
+                    colorResource(R.color.neon_yellow),
+                    contentColor = colorResource(R.color.detective_color_dark),
+                    disabledContainerColor = colorResource(R.color.grey),
+                    disabledContentColor = colorResource(R.color.black)
+                ),
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text(stringResource(R.string.abort))
+            }
+        }
+    )
 }

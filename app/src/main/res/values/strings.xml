@@ -28,4 +28,9 @@
     <string name="loading">Loading…</string>
     <string name="invalid_game_code_error">The game code is invalid. </string>
     <string name="bandit">Bandit</string>
+    <string name="found">Found!</string>
+    <string name="confirm_found">Yes, found!</string>
+    <string name="abort">Abort</string>
+    <string name="foud_question">Have you been found?</string>
+    <string name="back_home">Back to Main menu</string>
 </resources>

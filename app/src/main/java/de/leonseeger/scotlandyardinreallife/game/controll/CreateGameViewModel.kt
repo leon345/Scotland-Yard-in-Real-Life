@@ -162,6 +162,19 @@ class CreateGameViewModel(
         }
     }
 
+    fun endGame(){
+        viewModelScope.launch {
+            _gameState.value?.let{ game ->
+                val result = withContext(Dispatchers.IO) {
+                    gameCatalogue.updateGameStatus(game.id, GameStatus.FINISHED)
+                }
+                result.onFailure { exception ->
+                    _error.value = "Konnte Spiel nicht beenden: ${exception.message}"
+                }
+            }
+        }
+    }
+
     fun togglePlayerRole(playerId: String) {
         viewModelScope.launch {
             val gameId = _gameState.value?.id ?: return@launch

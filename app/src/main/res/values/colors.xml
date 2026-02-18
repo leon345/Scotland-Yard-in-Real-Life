@@ -14,4 +14,9 @@
     <color name="blue_transparent">#9D062E89</color>
     <color name="neon_yellow">#E6F33E</color>
     <color name="red_bright">#E42D2D</color>
+    <color name="bandit_color">#FF4539</color>
+    <color name="detective_color">#226AF0</color>
+    <color name="bandit_color_bg">#77D55B52</color>
+    <color name="detective_color_bg">#773C6CC5</color>
+    <color name="detective_color_dark">#3C6CC5</color>
 </resources>
