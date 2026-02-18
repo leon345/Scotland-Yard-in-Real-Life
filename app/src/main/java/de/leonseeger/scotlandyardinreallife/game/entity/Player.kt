@@ -5,5 +5,6 @@ import android.location.Location
 data class Player(
     val id: String,
     val currentLocation: Location?,
-    val role: PlayerRole
+    val role: PlayerRole,
+    val inBounds: Boolean
 )

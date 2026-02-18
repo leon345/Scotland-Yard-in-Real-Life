@@ -1,16 +1,15 @@
 package de.leonseeger.scotlandyardinreallife.ui.screens
 
 import android.content.Context
-import android.content.Intent
 import android.location.Location
-import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,15 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,6 +60,7 @@ fun GameRunningScreen(
     val permissionGranted by mapLocationModel.permissionGranted.collectAsState()
     val game by viewModel.gamestate.collectAsState()
     val currPlayerId by viewModel.currentPlayerId.collectAsState()
+    val serviceContext = LocalContext.current
 
     LaunchedEffect(game?.status) {
         if (game?.status == GameStatus.FINISHED) {
@@ -84,14 +80,13 @@ fun GameRunningScreen(
             /*Launching location service */
             val gameId = game?.id
             val playerId = currPlayerId
-            val context = LocalContext.current
             if (gameId != null && playerId != null)
                 LaunchedEffect(Unit) {
-                    startLocationService(context, gameId, playerId)
+                    viewModel.startLocationServices(serviceContext)
                     Log.d("Location Service", "Started Location Service")
                 }
             /*-------*/
-            RunningGameScreenComponent(viewModel, mapLocationModel)
+            RunningGameScreenComponent(viewModel, mapLocationModel, serviceContext)
         }
 
         LocationPermissionState.RequestRequired -> { //ask for permission
@@ -112,7 +107,8 @@ fun GameRunningScreen(
 @Composable
 fun RunningGameScreenComponent(
     viewModel: CreateGameViewModel,
-    mapLocationModel: MapLocationViewModel
+    mapLocationModel: MapLocationViewModel,
+    serviceContext: Context
 ) {
     val lastLocation by mapLocationModel.currentLocation.collectAsState()
     LaunchedEffect(Unit) {
@@ -124,13 +120,14 @@ fun RunningGameScreenComponent(
         CenteredLoadingIndicator(modifier = Modifier.padding(top = 100.dp))
     } else {
         val playMapData = remember { PlayMapData() }
-        GameMap(lastLocation!!, mapData = playMapData, viewModel)
+        GameMap(lastLocation!!, mapData = playMapData, viewModel, serviceContext)
     }
 }
 
 @Composable
-fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGameViewModel) {
+fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGameViewModel, serviceContext: Context) {
     var openEndDialog = remember { mutableStateOf(false) }
+    var openOutOfBoundsAlert = remember { mutableStateOf(false) }
 
     val players by viewModel.players.collectAsState()
     var mapReady by remember { mutableStateOf(false) }
@@ -222,14 +219,28 @@ fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGame
 
     if (mapReady) {
         LaunchedEffect(players) {
-            mapData.updatePlayers(players)
+            var playerOutOfBounds = false
+            for (player in players) {
+                if(!player.inBounds)
+                    playerOutOfBounds = true
+            }
+            if(playerOutOfBounds) {
+                openOutOfBoundsAlert.value = true
+                Log.w("Player Location", "Player out of bounds")
+            } else{ //only update player positions if all players in bounds
+                mapData.updatePlayers(players)
+                openOutOfBoundsAlert.value = false
+            }
         }
     }
 
     when {
         openEndDialog.value -> {
             EndGameDialog(
-                onDismissRequest = { openEndDialog.value = false },
+                onDismissRequest = {
+                    openEndDialog.value = false
+                    viewModel.stopLocationServices(serviceContext)
+                },
                 onConfirmation = {
                     openEndDialog.value = false
                     viewModel.endGame()
@@ -237,6 +248,9 @@ fun GameMap(startLocation: Location, mapData: PlayMapData, viewModel: CreateGame
                 title = "Spiel beenden?",
                 content = stringResource(R.string.foud_question)
             )
+        }
+        openOutOfBoundsAlert.value -> {
+            PlayerOutOfBoundsDialog(onDismissRequest = {})
         }
     }
 }
@@ -285,4 +299,18 @@ fun EndGameDialog(
             }
         }
     )
+}
+
+@Composable
+fun PlayerOutOfBoundsDialog(
+    onDismissRequest: () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = {
+        onDismissRequest()
+    }) {
+        Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Spieler außerhalb des Spielbereiches!", fontWeight = FontWeight.Bold, fontSize = 28.sp, color = colorResource(R.color.red_mid))
+        }
+    }
 }

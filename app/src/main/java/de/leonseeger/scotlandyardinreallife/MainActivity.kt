@@ -35,7 +35,6 @@ import de.leonseeger.scotlandyardinreallife.ui.screens.GameRunningScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameSettingScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.JoinGameScreen
-import de.leonseeger.scotlandyardinreallife.ui.screens.startLocationService
 import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
 import org.maplibre.android.MapLibre
 import kotlin.getValue

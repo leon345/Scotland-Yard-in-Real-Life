@@ -1,5 +1,7 @@
 package de.leonseeger.scotlandyardinreallife.game.controll
 
+import android.content.Context
+import android.location.Location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.leonseeger.scotlandyardinreallife.game.entity.Game
@@ -15,7 +17,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.maplibre.android.geometry.LatLng
 import org.maplibre.geojson.Point
+import org.maplibre.geojson.Polygon
+import org.maplibre.turf.TurfJoins
+
 
 class CreateGameViewModel(
     private val gameCatalogue: GameCatalogue, private val playerCatalogue: PlayerCatalogue
@@ -49,7 +55,7 @@ class CreateGameViewModel(
 
 
             val owner = Player(
-                id = ownerId, currentLocation = null, role = PlayerRole.DETECTIVE
+                id = ownerId, currentLocation = null, role = PlayerRole.DETECTIVE, inBounds = true
             )
 
             val newGame = Game(
@@ -80,7 +86,7 @@ class CreateGameViewModel(
             _isLoading.value = true
             _error.value = null
             val player = Player(
-                id = playerId, currentLocation = null, role = PlayerRole.DETECTIVE
+                id = playerId, currentLocation = null, role = PlayerRole.DETECTIVE, true
             )
             val result = withContext(Dispatchers.IO) {
                 playerCatalogue.addPlayerToGame(gameId, player)
@@ -190,6 +196,63 @@ class CreateGameViewModel(
                 _error.value = "Fehler beim Ändern der Rolle: ${exception.message}"
             }
         }
+    }
+
+    fun setPlayerInBounds(playerId: String, inBounds: Boolean){
+        viewModelScope.launch {
+            val gameId = _gameState.value?.id ?: return@launch
+            val player = _players.value.find { it.id == playerId } ?: return@launch
+
+            val updatedPlayer = player.copy(inBounds = inBounds)
+            val result = withContext(Dispatchers.IO) {
+                playerCatalogue.updatePlayer(gameId, updatedPlayer)
+            }
+
+            result.onFailure { exception ->
+                _error.value = "Fehler beim Ändern des InBounds status: ${exception.message}"
+            }
+        }
+    }
+
+    /**
+     * Starts the Location service and primes the Update interval based on the player role.
+     * Registers a callback to determine if player is in bounds
+     */
+    fun startLocationServices(serviceContext: Context){
+        val gameId = gamestate.value?.id ?: return
+        val playerId = currentPlayerId.value ?: return
+        startLocationService(serviceContext, gameId, playerId, getCurrPlayerRole())
+        viewModelScope.launch {
+            LocationUpdatesBus.locationUpdates.collect { location ->
+                handleLocationUpdate(location)
+            }
+        }
+    }
+
+    private fun handleLocationUpdate(location: Location) {
+        val currentPlayerId = _currentPlayerId.value ?: return
+        val game = _gameState.value ?: return
+
+        val isInside = isPointInsidePolygon(LatLng(latitude = location.latitude, longitude = location.longitude),
+            game.polygon)
+
+        setPlayerInBounds(currentPlayerId, isInside)
+    }
+
+    fun isPointInsidePolygon(
+        pos: LatLng,
+        polygon: List<Point>
+    ): Boolean {
+
+        val point = Point.fromLngLat(pos.longitude, pos.latitude)
+
+        val polygon = Polygon.fromLngLats(listOf<List<Point>>(polygon))
+
+        return TurfJoins.inside(point, polygon)
+    }
+
+    fun stopLocationServices(serviceContext: Context){
+        stopLocationService(serviceContext)
     }
 
     fun updateGameSettings(gameDuration: Long, banditRevealInterval: Long) {

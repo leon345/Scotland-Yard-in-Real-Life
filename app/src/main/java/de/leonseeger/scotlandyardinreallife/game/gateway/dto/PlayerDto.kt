@@ -8,7 +8,8 @@ import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
 data class PlayerDto(
     val id: String = "",
     val currentLocation: LocationDto? = null,
-    val role: String = ""
+    val role: String = "",
+    val inBounds: Boolean = true
 ) {
     fun toEntity(): Player = Player(
         id = id,
@@ -18,12 +19,14 @@ data class PlayerDto(
         } catch (e: IllegalArgumentException) {
             Log.e("PlayerDto", "Invalid PlayerRole: $role", e)
             PlayerRole.DETECTIVE
-        }
+        },
+        inBounds = inBounds
     )
 }
 
 fun Player.toDto(): PlayerDto = PlayerDto(
     id = id,
     currentLocation = currentLocation?.toDto(),
-    role = role.name
+    role = role.name,
+    inBounds = inBounds
 )

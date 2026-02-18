@@ -69,6 +69,7 @@ android {
 }
 
 dependencies {
+    implementation("org.maplibre.gl:android-sdk-turf:6.0.1")
     implementation("androidx.compose.material:material-icons-extended")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
