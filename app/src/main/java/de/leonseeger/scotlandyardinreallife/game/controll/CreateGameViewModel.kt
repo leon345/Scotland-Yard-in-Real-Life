@@ -1,9 +1,13 @@
 package de.leonseeger.scotlandyardinreallife.game.controll
 
+import android.content.Context
+import android.location.Location
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.leonseeger.scotlandyardinreallife.game.entity.Game
 import de.leonseeger.scotlandyardinreallife.game.entity.GameCatalogue
+import de.leonseeger.scotlandyardinreallife.game.entity.GameSettings
 import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.game.entity.Player
 import de.leonseeger.scotlandyardinreallife.game.entity.PlayerCatalogue
@@ -14,6 +18,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.maplibre.geojson.Point
+import de.leonseeger.scotlandyardinreallife.game.controll.LocationService
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import org.maplibre.android.geometry.LatLng
+import org.maplibre.geojson.Polygon
+import org.maplibre.turf.TurfJoins
 
 class CreateGameViewModel(
     private val gameCatalogue: GameCatalogue, private val playerCatalogue: PlayerCatalogue
@@ -34,6 +45,17 @@ class CreateGameViewModel(
     private val _currentPlayerId = MutableStateFlow<String?>(null)
     val currentPlayerId: StateFlow<String?> = _currentPlayerId.asStateFlow()
 
+    private val _gameSettings = MutableStateFlow(GameSettings.DEFAULT)
+    val gameSettings: StateFlow<GameSettings> = _gameSettings.asStateFlow()
+
+    private val _playArea = MutableStateFlow<List<Point>>(mutableListOf<Point>())
+    val playArea: StateFlow<List<Point>> = _playArea.asStateFlow()
+
+    private var gameTimerJob: Job? = null
+
+    private lateinit var serviceContext: Context
+    var inBounds = true
+
     fun createGame(ownerId: String) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -49,7 +71,10 @@ class CreateGameViewModel(
                 createdAt = System.currentTimeMillis(),
                 status = GameStatus.WAITING,
                 players = listOf(owner),
-                owner = owner
+                owner = owner,
+                settings = _gameSettings.value,
+                polygon = playArea.value,
+                gameWinner = null
             )
             val result = withContext(Dispatchers.IO) {
                 gameCatalogue.createGame(newGame)
@@ -88,22 +113,61 @@ class CreateGameViewModel(
 
     }
 
+    fun getCurrPlayerRole(): PlayerRole{
+        val currPlayer = players.value.find { player -> player.id == currentPlayerId.value }
+        if(currPlayer != null)
+            return currPlayer.role
+        return PlayerRole.DETECTIVE
+    }
+
     fun observeGame(gameId: String) {
         viewModelScope.launch {
-            gameCatalogue.getGameById(gameId).collect { game ->
-                _gameState.value = game
-                if (game == null) {
-                    _error.value = "Spiel wurde nicht gefunden"
+            try {
+                gameCatalogue.getGameById(gameId).collect { game ->
+                    _gameState.value = game
+                    if (game == null) {
+                        _error.value = "Spiel wurde nicht gefunden"
+                    }
+                    if (game?.status == GameStatus.RUNNING) {
+                        startGameTimer()
+                    }
+
+                    if (game?.status == GameStatus.FINISHED) {
+                        gameTimerJob?.cancel()
+                    }
                 }
+            } catch (e: Exception) {
+                _error.value = "Fehler beim Laden des Spiels: ${e.message}"
             }
+
         }
 
         viewModelScope.launch {
-            playerCatalogue.getPlayersInGame(gameId).collect { players ->
-                _players.value = players ?: emptyList()
+            try {
+                playerCatalogue.getPlayersInGame(gameId).collect { players ->
+                    _players.value = players ?: emptyList()
+                    //faster location updates when out of bounds
+                    val currPlayer = _players.value.find { it.id == _currentPlayerId.value }
+                    if(currPlayer?.currentLocation != null){
+                        val playerLoc = LatLng(currPlayer.currentLocation.latitude, currPlayer.currentLocation.longitude)
+                        testInBoundsChanged(isPointInsidePolygon(playerLoc, gamestate.value?.polygon))
+                    }
+                }
+            } catch (e: Exception) {
+                _error.value = "Fehler beim Laden der Spieler: ${e.message}"
             }
-        }
 
+        }
+    }
+
+    /**
+     * only change location update speed when changing state of inBounds
+     */
+    fun testInBoundsChanged(currentInBounds: Boolean){
+        if(currentInBounds != inBounds){
+            changeLocationUpdateSpeed(currentInBounds)
+            inBounds = currentInBounds
+        }
     }
 
     fun startGame() {
@@ -123,19 +187,16 @@ class CreateGameViewModel(
         }
     }
 
-    /*fun addPlayer(player: Player) {
-        viewModelScope.launch {
-            _gameState.value?.let { game ->
-                val result = withContext(Dispatchers.IO) {
-                    playerCatalogue.addPlayerToGame(game.id, player)
-                }
-                result.onFailure { exception ->
-                    _error.value = "Fehler beim Hinzufügen des Spielers: ${exception.message}"
-                }
+    private fun startGameTimer() {
+        gameTimerJob?.cancel()
 
-            }
+        val durationMillis = gameSettings.value.gameDuration * 60_000L
+
+        gameTimerJob = viewModelScope.launch {
+            delay(durationMillis)
+            endGame(PlayerRole.BANDIT)
         }
-    }*/
+    }
 
     fun deleteGame() {
         viewModelScope.launch {
@@ -145,6 +206,22 @@ class CreateGameViewModel(
                 }
                 result.onFailure { exception ->
                     _error.value = "Fehler beim Löschen des Spiels: ${exception.message}"
+                }
+            }
+        }
+    }
+
+    fun endGame(winnerTeam: PlayerRole){
+        gameTimerJob?.cancel()
+
+        viewModelScope.launch {
+            _gameState.value?.let{ game ->
+                val result = withContext(Dispatchers.IO) {
+                    _gameState.value?.gameWinner = winnerTeam
+                    gameCatalogue.endGame(game.id, winnerTeam)
+                }
+                result.onFailure { exception ->
+                    _error.value = "Konnte Spiel nicht beenden: ${exception.message}"
                 }
             }
         }
@@ -167,9 +244,89 @@ class CreateGameViewModel(
         }
     }
 
+    fun updateGameSettings(gameDuration: Long, banditRevealInterval: Long) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+
+            _gameSettings.value = GameSettings(
+                gameDuration = gameDuration,
+                banditRevealInterval = banditRevealInterval
+            )
+
+            _gameState.value?.let { curentgame ->
+                val updatedGame = curentgame.copy(settings = _gameSettings.value)
+                val result = withContext(Dispatchers.IO) {
+                    gameCatalogue.updateGame(updatedGame)
+                }
+
+                result.onSuccess {
+                    _isLoading.value = false
+                }.onFailure { exception ->
+                    _error.value =
+                        "Fehler beim Aktualisieren der Einstellungen: ${exception.message}"
+                    _isLoading.value = false
+                }
+            }
+
+        }
+
+    }
+
+    /**
+     * Starts the Location service and primes the Update interval based on the player role.
+     * Registers a callback to determine if player is in bounds
+     */
+    fun startLocationServices(serviceContext: Context){
+        val gameId = gamestate.value?.id ?: return
+        val playerId = currentPlayerId.value ?: return
+        this.serviceContext = serviceContext
+        val updateInterval: Long = if(getCurrPlayerRole() == PlayerRole.DETECTIVE) 1000L else gameSettings.value.banditRevealInterval * 60000
+        Log.d("Update interval", "" + gameSettings.value.banditRevealInterval)
+        startLocationService(serviceContext, gameId, playerId, updateInterval)
+    }
+
+    fun stopLocationServices(serviceContext: Context){
+        stopLocationService(serviceContext)
+    }
+
+    /**
+     * Stops location Service and restarts with new interval
+     */
+    fun changeLocationUpdateSpeed(resetToNormalSpeed: Boolean){
+        stopLocationServices(serviceContext)
+        if(resetToNormalSpeed)
+            startLocationServices(serviceContext)
+        else{
+            val gameId = gamestate.value?.id ?: return
+            val playerId = currentPlayerId.value ?: return
+            startLocationService(serviceContext, gameId, playerId, 600L)
+        }
+
+    }
+
     fun clearError() {
         _error.value = null
     }
 
+    fun setPlayArea(poly: List<Point>) {
+        _playArea.value = poly
+    }
+}
+
+fun isPointInsidePolygon(
+    pos: LatLng,
+    polygon: List<Point>?
+): Boolean {
+    if (polygon == null) {
+        Log.w("Player Bounds", "Polygon not defined")
+        return false
+    }
+
+    val point = Point.fromLngLat(pos.longitude, pos.latitude)
+
+    val polygon = Polygon.fromLngLats(listOf<List<Point>>(polygon))
+
+    return TurfJoins.inside(point, polygon)
 }
 

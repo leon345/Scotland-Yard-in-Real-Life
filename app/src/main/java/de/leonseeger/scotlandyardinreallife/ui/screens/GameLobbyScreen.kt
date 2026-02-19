@@ -3,6 +3,7 @@ package de.leonseeger.scotlandyardinreallife.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,7 +11,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,12 +26,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.leonseeger.scotlandyardinreallife.R
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
+import de.leonseeger.scotlandyardinreallife.game.entity.Game
 import de.leonseeger.scotlandyardinreallife.ui.component.ErrorText
 import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
 import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle
 import de.leonseeger.scotlandyardinreallife.ui.component.SubheadingText
 import de.leonseeger.scotlandyardinreallife.ui.component.gameloby.InvitationCodeCard
 import de.leonseeger.scotlandyardinreallife.ui.component.gameloby.PlayersList
+import org.maplibre.geojson.Point
 
 @Composable
 fun GameLobbyScreen(
@@ -35,17 +43,27 @@ fun GameLobbyScreen(
     mode: String?,
     playerId: String,
     modifier: Modifier = Modifier,
-    onStartGame: () -> Unit = {}
+    playArea: List<Point>?,
+    onStartGame: () -> Unit,
+    onNavigateToSettings: () -> Unit = {}
 ) {
     val gameState by viewModel.gamestate.collectAsState()
     val players by viewModel.players.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
 
-    LaunchedEffect(gameId, mode) {
-        when (mode) {
-            "CREATE" -> viewModel.createGame(playerId)
-            "JOIN" -> gameId?.let { viewModel.joinGame(it, playerId) }
+    LaunchedEffect(Unit) {
+        if (gameState == null) {
+            when (mode) {
+                "CREATE" -> viewModel.createGame(playerId)
+                "JOIN" -> gameId?.let { viewModel.joinGame(it, playerId) }
+            }
+        }
+    }
+
+    LaunchedEffect(gameState?.status) {
+        if (gameState?.status == GameStatus.RUNNING) {
+            onStartGame();
         }
     }
 
@@ -55,9 +73,23 @@ fun GameLobbyScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        SectionTitle(
-            text = stringResource(R.string.create_game_title)
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            SectionTitle(
+                text = stringResource(R.string.create_game_title)
+            )
+
+            IconButton(onClick = onNavigateToSettings) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Spieleinstellungen",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
         if (isLoading) {
             Box(
                 modifier = Modifier

@@ -1,6 +1,5 @@
 package de.leonseeger.scotlandyardinreallife.game.gateway
 
-import android.location.Location
 import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -9,11 +8,13 @@ import de.leonseeger.scotlandyardinreallife.game.entity.GameCatalogue
 import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.game.entity.Player
 import de.leonseeger.scotlandyardinreallife.game.entity.PlayerCatalogue
+import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
 import de.leonseeger.scotlandyardinreallife.game.gateway.dto.GameDto
 import de.leonseeger.scotlandyardinreallife.game.gateway.dto.toDto
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.tasks.await
 
 class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogue, GameCatalogue {
@@ -21,29 +22,44 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
 
     override suspend fun addPlayerToGame(
         gameId: String, player: Player
-    ): Result<String> = try {
-        val gameRef = gamesCollection.document(gameId);
-        Log.d("FirebaseGateway", "Adding player to game with ID $gameId: $player")
-        var generatedId = ""
-        firestore.runTransaction { transaction ->
-            val snapshot = transaction.get(gameRef)
-            val currentCounter = snapshot.getLong("counter") ?: 0
-            val newPlayerId = (currentCounter + 1).toString()
-            generatedId = newPlayerId
+    ): Result<String> {
+        return try {
+            val gameRef = gamesCollection.document(gameId);
+            Log.d("FirebaseGateway", "Adding player to game with ID $gameId: $player")
+            var generatedId = ""
+            firestore.runTransaction { transaction ->
+                val snapshot = transaction.get(gameRef)
 
-            val playerWithId = player.copy(id = newPlayerId)
-            val playerDto = playerWithId.toDto()
+                if (!snapshot.exists()) {
+                    throw IllegalStateException()
+                }
 
-            transaction.update(gameRef, "counter", currentCounter + 1)
-            transaction.update(gameRef, "players", FieldValue.arrayUnion(playerDto))
+                val gameDto =
+                    snapshot.toObject(GameDto::class.java) ?: throw IllegalStateException()
 
-            Unit
+                if (gameDto.status == GameStatus.FINISHED.name) {
+                    throw IllegalStateException()
+                }
 
-        }.await()
-        Result.success(generatedId)
-    } catch (e: Exception) {
-        Log.e("FirebaseGateway", "Failed to add player to game", e)
-        Result.failure(e)
+
+                val currentCounter = snapshot.getLong("counter") ?: 0
+                val newPlayerId = (currentCounter + 1).toString()
+                generatedId = newPlayerId
+
+                val playerWithId = player.copy(id = newPlayerId)
+                val playerDto = playerWithId.toDto()
+
+                transaction.update(gameRef, "counter", currentCounter + 1)
+                transaction.update(gameRef, "players", FieldValue.arrayUnion(playerDto))
+
+                Unit
+
+            }.await()
+            Result.success(generatedId)
+        } catch (e: Exception) {
+            Log.e("FirebaseGateway", "Failed to add player to game", e)
+            Result.failure(e)
+        }
     }
 
     override suspend fun updatePlayer(
@@ -114,16 +130,6 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
 
     }
 
-    override fun observePlayerLocations(gameId: String): Flow<Map<Player, String>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun updatePlayerLocation(
-        gameId: String, playerId: String, location: Location
-    ): Result<Unit> {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun createGame(game: Game): Result<String> = try {
         val docRef = gamesCollection.document()
         val gameWithId = game.copy(id = docRef.id)
@@ -150,6 +156,9 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
         awaitClose {
             listener.remove()
         }
+    }.catch { e ->
+        Log.e("FirebaseGateway", "Failed to get game", e)
+        emit(null)
     }
 
     override suspend fun updateGame(game: Game): Result<Unit> = try {
@@ -179,9 +188,9 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
                     close(error)
                     return@addSnapshotListener
                 }
-                val games =
-                    snapshot?.documents?.mapNotNull { it.toObject(GameDto::class.java)?.toEntity() }
-                        ?: emptyList()
+                val games = snapshot?.documents?.mapNotNull {
+                    it.toObject(GameDto::class.java)?.toEntity()
+                } ?: emptyList()
                 trySend(games)
             }
         awaitClose {
@@ -189,14 +198,22 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
         }
     }
 
-    override fun observeActiveGame(): Flow<Game> = callbackFlow {
-        //TODO das aktuelle teilnehmende game. Wodrinnen man ist
-    }
-
     override suspend fun updateGameStatus(
         gameId: String, status: GameStatus
     ): Result<Unit> = try {
         gamesCollection.document(gameId).update("status", status.name).await()
+        Result.success(Unit)
+
+    } catch (e: Exception) {
+        Log.e("FirebaseGateway", "Failed to update game status", e)
+        Result.failure(e)
+    }
+
+    override suspend fun endGame(
+        gameId: String, winner: PlayerRole
+    ): Result<Unit> = try {
+        gamesCollection.document(gameId).update("gameWinner", winner.name,
+                                                "status", GameStatus.FINISHED).await()
         Result.success(Unit)
 
     } catch (e: Exception) {
