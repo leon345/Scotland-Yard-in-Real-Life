@@ -8,6 +8,7 @@ import de.leonseeger.scotlandyardinreallife.game.entity.GameCatalogue
 import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.game.entity.Player
 import de.leonseeger.scotlandyardinreallife.game.entity.PlayerCatalogue
+import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
 import de.leonseeger.scotlandyardinreallife.game.gateway.dto.GameDto
 import de.leonseeger.scotlandyardinreallife.game.gateway.dto.toDto
 import kotlinx.coroutines.channels.awaitClose
@@ -201,6 +202,18 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
         gameId: String, status: GameStatus
     ): Result<Unit> = try {
         gamesCollection.document(gameId).update("status", status.name).await()
+        Result.success(Unit)
+
+    } catch (e: Exception) {
+        Log.e("FirebaseGateway", "Failed to update game status", e)
+        Result.failure(e)
+    }
+
+    override suspend fun endGame(
+        gameId: String, winner: PlayerRole
+    ): Result<Unit> = try {
+        gamesCollection.document(gameId).update("gameWinner", winner.name,
+                                                "status", GameStatus.FINISHED).await()
         Result.success(Unit)
 
     } catch (e: Exception) {

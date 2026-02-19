@@ -66,7 +66,7 @@ import org.maplibre.turf.TurfJoins
 fun GameRunningScreen(
     viewModel: CreateGameViewModel,
     mapLocationModel: MapLocationViewModel = viewModel(),
-    onGameEnd: () -> Unit = {}
+    onGameEnd: (PlayerRole?) -> Unit = {}
 ) {
     val permissionGranted by mapLocationModel.permissionGranted.collectAsState()
     val game by viewModel.gamestate.collectAsState()
@@ -75,7 +75,7 @@ fun GameRunningScreen(
 
     LaunchedEffect(game?.status) {
         if (game?.status == GameStatus.FINISHED) {
-            onGameEnd()
+            onGameEnd(game?.gameWinner)
         }
     }
 
@@ -120,7 +120,8 @@ fun GameRunningScreen(
 fun RunningGameScreenComponent(
     viewModel: CreateGameViewModel,
     mapLocationModel: MapLocationViewModel,
-    serviceContext: Context = LocalContext.current
+    serviceContext: Context = LocalContext.current,
+    onGameEnd: (PlayerRole?) -> Unit = {}
 ) {
     val lastLocation by mapLocationModel.currentLocation.collectAsState()
     LaunchedEffect(Unit) {
@@ -141,7 +142,8 @@ fun GameMap(
     startLocation: Location,
     mapData: PlayMapData,
     viewModel: CreateGameViewModel,
-    serviceContext: Context = LocalContext.current
+    serviceContext: Context = LocalContext.current,
+    onGameEnd: (PlayerRole?) -> Unit = {}
 ) {
     var openEndDialog by remember { mutableStateOf(false) }
     var playerOutOfBounds by remember { mutableStateOf(false) }
@@ -260,7 +262,8 @@ fun GameMap(
                     onConfirmation = {
                         openEndDialog = false
                         viewModel.stopLocationServices(serviceContext)
-                        viewModel.endGame()
+                        onGameEnd(PlayerRole.DETECTIVE)
+                        viewModel.endGame(PlayerRole.DETECTIVE)
                     },
                     title = "Spiel beenden?",
                     content = stringResource(R.string.foud_question)

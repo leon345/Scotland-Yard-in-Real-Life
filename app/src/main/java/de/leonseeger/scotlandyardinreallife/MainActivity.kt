@@ -24,6 +24,7 @@ import androidx.navigation.navArgument
 import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.game.CreateGameViewModelFactory
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMap
@@ -194,16 +195,29 @@ fun AppNavigation(
         ) {
             GameRunningScreen(
                 viewModel = viewModel,
-                onGameEnd = {
-                    navController.navigate(NavigationRoutes.GAME_END)
+                onGameEnd = { winnerTeam ->
+                    var msg: String
+                    when (winnerTeam){
+                        PlayerRole.DETECTIVE -> msg = "Die Detektive haben gewonnen"
+                        PlayerRole.BANDIT -> msg = "Die Banditen sind entkommen"
+                        null -> msg = "Unentschieden"
+                    }
+                    navController.navigate(NavigationRoutes.gameEnding(msg))
                 }
             )
         }
 
         composable(
-            NavigationRoutes.GAME_END
-        ) {
+            NavigationRoutes.GAME_END,
+            arguments = listOf(
+                navArgument("winMessage") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val msg = backStackEntry.arguments?.getString("winMessage") ?: "Unentschieden"
             GameEndScreen(
+                winMsg = msg,
                 onBackHome = {
                     navController.navigate(NavigationRoutes.HOME)
                 }

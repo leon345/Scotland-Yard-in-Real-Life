@@ -23,6 +23,7 @@ import de.leonseeger.scotlandyardinreallife.R
 
 @Composable
 fun GameEndScreen(
+    winMsg: String,
     onBackHome: () -> Unit = {}
 ) {
     Column(
@@ -43,7 +44,7 @@ fun GameEndScreen(
                 fontWeight = FontWeight.Bold,
                 color = colorResource(R.color.neon_yellow)
             )
-            Text("Der Räuber wurde gefasst")
+            Text(winMsg)
             TextButton(
                 colors = ButtonColors(
                     colorResource(R.color.neon_yellow),

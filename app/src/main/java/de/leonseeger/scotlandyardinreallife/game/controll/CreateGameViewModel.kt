@@ -73,7 +73,8 @@ class CreateGameViewModel(
                 players = listOf(owner),
                 owner = owner,
                 settings = _gameSettings.value,
-                polygon = playArea.value
+                polygon = playArea.value,
+                gameWinner = null
             )
             val result = withContext(Dispatchers.IO) {
                 gameCatalogue.createGame(newGame)
@@ -193,7 +194,7 @@ class CreateGameViewModel(
 
         gameTimerJob = viewModelScope.launch {
             delay(durationMillis)
-            endGame()
+            endGame(PlayerRole.BANDIT)
         }
     }
 
@@ -210,13 +211,14 @@ class CreateGameViewModel(
         }
     }
 
-    fun endGame(){
+    fun endGame(winnerTeam: PlayerRole){
         gameTimerJob?.cancel()
 
         viewModelScope.launch {
             _gameState.value?.let{ game ->
                 val result = withContext(Dispatchers.IO) {
-                    gameCatalogue.updateGameStatus(game.id, GameStatus.FINISHED)
+                    _gameState.value?.gameWinner = winnerTeam
+                    gameCatalogue.endGame(game.id, winnerTeam)
                 }
                 result.onFailure { exception ->
                     _error.value = "Konnte Spiel nicht beenden: ${exception.message}"

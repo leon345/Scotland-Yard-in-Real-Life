@@ -10,7 +10,8 @@ data class Game(
     val players: List<Player>,
     val owner: Player,
     val counter: Int = 0,
-    val settings: GameSettings
+    val settings: GameSettings,
+    var gameWinner: PlayerRole?
 ) {
 
 
