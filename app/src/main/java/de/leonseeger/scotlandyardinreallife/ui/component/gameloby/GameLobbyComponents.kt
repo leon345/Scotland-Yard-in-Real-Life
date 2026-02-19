@@ -56,7 +56,7 @@ fun InvitationCodeCard(gameId: String) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = gameId,
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )

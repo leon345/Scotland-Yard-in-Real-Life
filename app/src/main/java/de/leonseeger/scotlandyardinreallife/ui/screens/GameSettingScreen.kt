@@ -1,6 +1,8 @@
 package de.leonseeger.scotlandyardinreallife.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,12 +10,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,7 +28,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import de.leonseeger.scotlandyardinreallife.R
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.game.entity.GameSettings
 import de.leonseeger.scotlandyardinreallife.ui.component.LabelText
@@ -52,7 +64,7 @@ fun GameSettingScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(vertical = 16.dp, horizontal = 4.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Row(
@@ -91,33 +103,47 @@ fun GameSettingScreen(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-        SubheadingText(text = "Spieldauer")
+        Card(
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = colorResource(R.color.detective_color_bg))
+        ) {
+            Column(Modifier.padding(12.dp)) {
+                Text(text = "Spieldauer", color = colorResource(R.color.neon_yellow), fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
-        SettingInputField(
-            label = "Spieldauer (Minuten)",
-            value = gameDuration,
-            onValueChange = {
-                gameDuration = it
-                gameDurationError = validateDuration(it)
-            },
-            errorMessage = gameDurationError,
-            description = "Wie lange soll das Spiel dauern? (15-180 Minuten)"
-        )
+                SettingInputField(
+                    label = "Spieldauer (Minuten)",
+                    value = gameDuration,
+                    onValueChange = {
+                        gameDuration = it
+                        gameDurationError = validateDuration(it)
+                    },
+                    errorMessage = gameDurationError,
+                    description = "Wie lange soll das Spiel dauern? (15-180 Minuten)"
+                )
+            }
+        }
+
 
         Spacer(modifier = Modifier.height(8.dp))
+        Card(
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = colorResource(R.color.detective_color_bg))
+        ) {
+            Column(Modifier.padding(12.dp)) {
+                Text(text = "Banditen-Offenbarungsintervall", color = colorResource(R.color.neon_yellow), fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
-        SubheadingText(text = "Banditen-Offenbarungsintervall")
-
-        SettingInputField(
-            label = "Intervall (Minuten)",
-            value = banditRevealInterval,
-            onValueChange = {
-                banditRevealInterval = it
-                banditIntervalError = validateInterval(it)
-            },
-            errorMessage = banditIntervalError,
-            description = "Wie oft soll die Position des Banditen angezeigt werden? (1-30 Minuten)"
-        )
+                SettingInputField(
+                    label = "Intervall (Minuten)",
+                    value = banditRevealInterval,
+                    onValueChange = {
+                        banditRevealInterval = it
+                        banditIntervalError = validateInterval(it)
+                    },
+                    errorMessage = banditIntervalError,
+                    description = "Wie oft soll die Position des Banditen angezeigt werden? (1-30 Minuten)"
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 
