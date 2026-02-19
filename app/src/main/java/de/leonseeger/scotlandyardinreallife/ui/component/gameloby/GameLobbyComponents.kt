@@ -1,5 +1,6 @@
 package de.leonseeger.scotlandyardinreallife.ui.component.gameloby
 
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,8 +40,18 @@ import de.leonseeger.scotlandyardinreallife.ui.component.LabelText
 
 @Composable
 fun InvitationCodeCard(gameId: String) {
+    val context = LocalContext.current
+    val shareTitle = stringResource(R.string.share_code_message)
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, gameId)
+                }
+                context.startActivity(Intent.createChooser(sendIntent, shareTitle))
+            },
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer),
         shape = RoundedCornerShape(12.dp)
     ) {
