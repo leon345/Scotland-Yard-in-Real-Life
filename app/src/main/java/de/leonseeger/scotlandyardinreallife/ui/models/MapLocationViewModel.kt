@@ -1,10 +1,11 @@
-package de.leonseeger.scotlandyardinreallife.game.controll
+package de.leonseeger.scotlandyardinreallife.ui.models
 
 import android.app.Application
 import android.content.Context
 import android.location.Location
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import de.leonseeger.scotlandyardinreallife.controll.LocationProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

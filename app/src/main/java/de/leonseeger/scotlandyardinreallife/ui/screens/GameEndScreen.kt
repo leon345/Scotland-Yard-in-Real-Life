@@ -39,7 +39,7 @@ fun GameEndScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                "Das Spiel ist beendet",
+                stringResource(R.string.game_over_message),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 color = colorResource(R.color.neon_yellow)

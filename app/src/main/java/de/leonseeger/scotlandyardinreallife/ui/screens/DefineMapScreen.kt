@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.game.controll.MapLocationViewModel
-import de.leonseeger.scotlandyardinreallife.game.controll.LocationPermissionState
+import de.leonseeger.scotlandyardinreallife.ui.models.MapLocationViewModel
+import de.leonseeger.scotlandyardinreallife.ui.models.LocationPermissionState
 import de.leonseeger.scotlandyardinreallife.ui.component.CenteredLoadingIndicator
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
 import org.maplibre.geojson.Point
@@ -112,7 +112,7 @@ fun PlayareaDefinitionMap(
             onMapReady = { map ->
                 map.getMapLibreMap().addOnMapClickListener { point ->
                     if (!map.addPolyPoint(point)) {
-                        Toast.makeText(context, "Polygon braucht mehr Punkte", Toast.LENGTH_SHORT)
+                        Toast.makeText(context, context.getString(R.string.poly_needs_more_points), Toast.LENGTH_SHORT)
                             .show()
                     }
                     map.addMarker(point);
@@ -179,7 +179,7 @@ fun PlayareaDefinitionMap(
                     if (polygon.size > 3)
                         onMapDefined(polygon)
                     else
-                        Toast.makeText(context, "Polygon braucht mehr Punkte", Toast.LENGTH_SHORT)
+                        Toast.makeText(context, context.getString(R.string.poly_needs_more_points), Toast.LENGTH_SHORT)
                             .show()
                 },
 

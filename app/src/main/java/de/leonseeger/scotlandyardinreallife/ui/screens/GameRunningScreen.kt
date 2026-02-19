@@ -1,27 +1,20 @@
 package de.leonseeger.scotlandyardinreallife.ui.screens
 
 import android.content.Context
-import android.content.Intent
 import android.location.Location
-import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,35 +24,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
-import de.leonseeger.scotlandyardinreallife.game.controll.LocationPermissionState
-import de.leonseeger.scotlandyardinreallife.game.controll.MapLocationViewModel
-import de.leonseeger.scotlandyardinreallife.game.controll.isPointInsidePolygon
-import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
-import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
+import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.ui.models.LocationPermissionState
+import de.leonseeger.scotlandyardinreallife.ui.models.MapLocationViewModel
+import de.leonseeger.scotlandyardinreallife.ui.models.isPointInsidePolygon
+import de.leonseeger.scotlandyardinreallife.entity.GameStatus
+import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
 import de.leonseeger.scotlandyardinreallife.ui.component.CenteredLoadingIndicator
 import de.leonseeger.scotlandyardinreallife.ui.component.EndGameDialog
 import de.leonseeger.scotlandyardinreallife.ui.component.PlayerOutOfBoundsNotification
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
 import org.maplibre.android.geometry.LatLng
-import org.maplibre.geojson.Point
-import org.maplibre.geojson.Polygon
-import org.maplibre.turf.TurfJoins
 
 /**
  * The Map shown before the Game Lobby for the Host, to define the Playarea
@@ -168,13 +153,10 @@ fun GameMap(
             invert = true,
             appContext = LocalContext.current,
             onMapReady = { map ->
-                Log.w("Map", "Map ready")
                 mapReady = true
                 val polygon = viewModel.gamestate.value?.polygon
                 if (polygon != null) {
-                    Log.w("Map", "Poly not null")
                     for (poly in polygon) {
-                        Log.w("Map", "Adding Poly to map")
                         map.addPolyPoint(LatLng(poly.latitude(), poly.longitude()), true)
                     }
                 }
@@ -267,7 +249,7 @@ fun GameMap(
                         onGameEnd(PlayerRole.DETECTIVE)
                         viewModel.endGame(PlayerRole.DETECTIVE)
                     },
-                    title = "Spiel beenden?",
+                    title = stringResource(R.string.end_game_question),
                     content = stringResource(R.string.foud_question)
                 )
             }

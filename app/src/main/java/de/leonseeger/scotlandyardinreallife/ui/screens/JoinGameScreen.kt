@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
 import de.leonseeger.scotlandyardinreallife.ui.component.CustomTextField
 import de.leonseeger.scotlandyardinreallife.ui.component.ErrorText

@@ -1,18 +1,15 @@
 package de.leonseeger.scotlandyardinreallife.ui.component.gamemap
 
-import android.R.attr.bitmap
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import  android.content.Context
 import android.graphics.BitmapFactory
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.res.ResourcesCompat
 import de.leonseeger.scotlandyardinreallife.BuildConfig
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.game.entity.Player
-import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
+import de.leonseeger.scotlandyardinreallife.entity.Player
+import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
@@ -25,9 +22,6 @@ import org.maplibre.android.style.layers.PropertyFactory.fillColor
 import org.maplibre.android.style.layers.PropertyFactory.fillOpacity
 import org.maplibre.android.style.layers.PropertyFactory.iconAllowOverlap
 import org.maplibre.android.style.layers.PropertyFactory.iconColor
-import org.maplibre.android.style.layers.PropertyFactory.iconHaloBlur
-import org.maplibre.android.style.layers.PropertyFactory.iconHaloColor
-import org.maplibre.android.style.layers.PropertyFactory.iconHaloWidth
 import org.maplibre.android.style.layers.PropertyFactory.iconIgnorePlacement
 import org.maplibre.android.style.layers.PropertyFactory.iconImage
 import org.maplibre.android.style.layers.PropertyFactory.iconOpacity

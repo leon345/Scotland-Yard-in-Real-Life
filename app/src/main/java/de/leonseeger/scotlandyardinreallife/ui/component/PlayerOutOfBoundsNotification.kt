@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,8 +34,8 @@ fun PlayerOutOfBoundsNotification() {
                 )
                 .padding(20.dp)
         ) {
-            Text("Spiel pausiert", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = colorResource(R.color.neon_yellow))
-            Text("Spieler außerhalb Spielbereich", fontSize = 18.sp, color = colorResource(R.color.bandit_color))
+            Text(stringResource(R.string.game_paused), fontSize = 24.sp, fontWeight = FontWeight.Bold, color = colorResource(R.color.neon_yellow))
+            Text(stringResource(R.string.player_out_of_bounds), fontSize = 18.sp, color = colorResource(R.color.bandit_color))
         }
 
     }

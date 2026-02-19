@@ -38,4 +38,11 @@
     <string name="abort">Abbrechen</string>
     <string name="foud_question">Wurdest du gefunden?</string>
     <string name="back_home">Zurück zum Hauptmenü</string>
+    <string name="game_over_message">Das Spiel ist beendet</string>
+    <string name="end_game_question">Spiel beenden?</string>
+    <string name="poly_needs_more_points">Polygon braucht mehr Punkte</string>
+    <string name="save">Speichern</string>
+    <string name="create_game">Spiel erstellen</string>
+    <string name="join_game">Spiel beitreten</string>
+    <string name="game_paused">Spiel pausiert</string>
 </resources>

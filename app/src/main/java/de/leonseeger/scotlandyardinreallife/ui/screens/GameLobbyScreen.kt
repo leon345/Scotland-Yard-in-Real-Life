@@ -25,9 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
-import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
-import de.leonseeger.scotlandyardinreallife.game.entity.Game
+import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.ui.component.ErrorText
 import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
 import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle

@@ -9,12 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -22,13 +18,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.firebase.firestore.FirebaseFirestore
-import de.leonseeger.scotlandyardinreallife.game.CreateGameViewModelFactory
-import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
-import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
-import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
+import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
+import de.leonseeger.scotlandyardinreallife.gateway.FirebaseGateway
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
-import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMap
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
+import de.leonseeger.scotlandyardinreallife.ui.models.GameViewModelFactory
 import de.leonseeger.scotlandyardinreallife.ui.screens.DefineMapScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameEndScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameLobbyScreen
@@ -43,7 +38,7 @@ import kotlin.getValue
 class MainActivity : ComponentActivity() {
     private val firebaseGateway = FirebaseGateway(FirebaseFirestore.getInstance())
     private val gameLobbyViewModel: CreateGameViewModel by viewModels {
-        CreateGameViewModelFactory(
+        GameViewModelFactory(
             gameCatalogue = firebaseGateway, playerCatalogue = firebaseGateway
         )
     }
@@ -58,10 +53,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val playMap = remember { PlayMapData() }
             ScotlandYardInRealLifeTheme {
-                /*PlayMap(
-                    playMap = playMap,
-                    context = LocalContext.current
-                )*/
                 navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavigation(
@@ -74,36 +65,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    /*//Für DEMO Location Service
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        MapLibre.getInstance(this)
-        enableEdgeToEdge()
-
-        setContent {
-            val playMap = remember { PlayMap() }
-            ScotlandYardInRealLifeTheme {
-                navController = rememberNavController()
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(modifier = Modifier.padding(innerPadding)) {
-
-                        LocationServiceDemoScreen(
-                            modifier = Modifier.weight(0.4f)
-                        )
-
-                        Divider(thickness = 2.dp)
-
-                        AppNavigation(
-                            navController = navController,
-                            viewModel = gameLobbyViewModel,
-                            modifier = Modifier.weight(0.6f)
-                        )
-                    }
-                }
-            }
-        }
-    }*/
 }
 
 

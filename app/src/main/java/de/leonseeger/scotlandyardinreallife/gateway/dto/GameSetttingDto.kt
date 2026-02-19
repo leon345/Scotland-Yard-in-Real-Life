@@ -1,6 +1,6 @@
-package de.leonseeger.scotlandyardinreallife.game.gateway.dto
+package de.leonseeger.scotlandyardinreallife.gateway.dto
 
-import de.leonseeger.scotlandyardinreallife.game.entity.GameSettings
+import de.leonseeger.scotlandyardinreallife.entity.GameSettings
 
 data class GameSettingDto(
     val gameDuration: Long = 60,

@@ -33,4 +33,12 @@
     <string name="abort">Abort</string>
     <string name="foud_question">Have you been found?</string>
     <string name="back_home">Back to Main menu</string>
+    <string name="game_over_message">Game Over</string>
+    <string name="end_game_question">End game?</string>
+    <string name="poly_needs_more_points">Polygon needs more Points</string>
+    <string name="save">Save</string>
+    <string name="create_game">Create new Game</string>
+    <string name="join_game">Join game</string>
+    <string name="game_paused">Game Paused</string>
+    <string name="player_out_of_bounds">A player is out of bounds</string>
 </resources>
