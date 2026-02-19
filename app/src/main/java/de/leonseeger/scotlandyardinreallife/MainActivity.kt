@@ -125,7 +125,7 @@ fun AppNavigation(
             val mode = backStackEntry.arguments?.getString("mode") ?: "CREATE"
 
             val gameCode = backStackEntry.arguments?.getString("gameCode")
-            val playerId = "0" //TODO nicht schön
+            val playerId = "0"
 
             GameLobbyScreen(
                 viewModel = viewModel,

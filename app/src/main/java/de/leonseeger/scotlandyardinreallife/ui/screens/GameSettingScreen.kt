@@ -195,7 +195,7 @@ private fun SettingInputField(
     }
 }
 
-//TODO schönere Valdidierung direkt an dem Entity
+
 private fun validateDuration(value: String): String? {
     val number = value.toLongOrNull()
     return when {

@@ -33,7 +33,7 @@ class CreateGameViewModel(
     val gamestate: StateFlow<Game?> = _gameState.asStateFlow()
 
     private val _players =
-        MutableStateFlow<List<Player>>(emptyList()) //TODO Backing Property Patter
+        MutableStateFlow<List<Player>>(emptyList())
     val players: StateFlow<List<Player>> = _players.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
