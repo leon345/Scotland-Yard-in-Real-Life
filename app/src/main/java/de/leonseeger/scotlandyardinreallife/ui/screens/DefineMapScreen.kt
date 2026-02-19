@@ -164,6 +164,7 @@ fun PlayareaDefinitionMap(
                 onClick = {
                     mapData.removeLastPolyPoint()
                 },
+                modifier = Modifier.padding(end = 3.dp)
                 ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Undo,

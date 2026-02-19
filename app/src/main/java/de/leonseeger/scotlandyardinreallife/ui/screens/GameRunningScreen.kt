@@ -53,6 +53,8 @@ import de.leonseeger.scotlandyardinreallife.game.controll.isPointInsidePolygon
 import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
 import de.leonseeger.scotlandyardinreallife.ui.component.CenteredLoadingIndicator
+import de.leonseeger.scotlandyardinreallife.ui.component.EndGameDialog
+import de.leonseeger.scotlandyardinreallife.ui.component.PlayerOutOfBoundsNotification
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.geojson.Point
@@ -277,73 +279,7 @@ fun GameMap(
     }
 }
 
-@Composable
-fun EndGameDialog(
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
-    title: String,
-    content: String
-) {
-    AlertDialog(
-        title = { Text(text = title) },
-        text = { Text(text = content) },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                colors = ButtonColors(
-                    colorResource(R.color.detective_color_dark),
-                    contentColor = colorResource(R.color.neon_yellow),
-                    disabledContainerColor = colorResource(R.color.grey),
-                    disabledContentColor = colorResource(R.color.black)
-                ),
-                onClick = {
-                    onConfirmation()
-                }
-            ) {
-                Text(stringResource(R.string.confirm_found))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                colors = ButtonColors(
-                    colorResource(R.color.neon_yellow),
-                    contentColor = colorResource(R.color.detective_color_dark),
-                    disabledContainerColor = colorResource(R.color.grey),
-                    disabledContentColor = colorResource(R.color.black)
-                ),
-                onClick = {
-                    onDismissRequest()
-                }
-            ) {
-                Text(stringResource(R.string.abort))
-            }
-        }
-    )
-}
 
-@Composable
-fun PlayerOutOfBoundsNotification() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(R.color.grey_dark_transparent))
-    ) {
-        Column(
-            modifier = Modifier
-                .background(
-                    colorResource(R.color.detective_color_bg),
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .padding(20.dp)
-        ) {
-            Text("Spiel pausiert", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = colorResource(R.color.neon_yellow))
-            Text("Spieler außerhalb Spielbereich", fontSize = 18.sp, color = colorResource(R.color.bandit_color))
-        }
 
-    }
-}
+
 

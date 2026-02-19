@@ -13,7 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import de.leonseeger.scotlandyardinreallife.R
 
 @Composable
 fun PrimaryButton(
@@ -30,8 +32,8 @@ fun PrimaryButton(
             .height(56.dp),
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
+            containerColor = colorResource(R.color.detective_color_dark),
+            contentColor = colorResource(R.color.neon_yellow)
         )
     ) {
         icon?.let {
@@ -54,13 +56,16 @@ fun SecondaryButton(
     enabled: Boolean = true,
     icon: ImageVector? = null
 ) {
-    OutlinedButton(
+    Button(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
         enabled = enabled,
-        contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorResource(R.color.grey_transparent),
+            contentColor = colorResource(R.color.detective_color_dark))
     ) {
         icon?.let {
             Icon(
