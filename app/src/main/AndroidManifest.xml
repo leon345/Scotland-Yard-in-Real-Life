@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".game.controll.LocationService"
+            android:name=".controll.LocationService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />

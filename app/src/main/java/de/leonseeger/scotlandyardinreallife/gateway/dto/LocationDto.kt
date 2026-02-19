@@ -1,4 +1,4 @@
-package de.leonseeger.scotlandyardinreallife.game.gateway.dto
+package de.leonseeger.scotlandyardinreallife.gateway.dto
 
 import android.location.Location
 import org.maplibre.geojson.Point

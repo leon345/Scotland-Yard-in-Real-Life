@@ -1,16 +1,16 @@
-package de.leonseeger.scotlandyardinreallife.game.gateway
+package de.leonseeger.scotlandyardinreallife.gateway
 
 import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import de.leonseeger.scotlandyardinreallife.game.entity.Game
-import de.leonseeger.scotlandyardinreallife.game.entity.GameCatalogue
-import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
-import de.leonseeger.scotlandyardinreallife.game.entity.Player
-import de.leonseeger.scotlandyardinreallife.game.entity.PlayerCatalogue
-import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
-import de.leonseeger.scotlandyardinreallife.game.gateway.dto.GameDto
-import de.leonseeger.scotlandyardinreallife.game.gateway.dto.toDto
+import de.leonseeger.scotlandyardinreallife.entity.Game
+import de.leonseeger.scotlandyardinreallife.entity.GameCatalogue
+import de.leonseeger.scotlandyardinreallife.entity.GameStatus
+import de.leonseeger.scotlandyardinreallife.entity.Player
+import de.leonseeger.scotlandyardinreallife.entity.PlayerCatalogue
+import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
+import de.leonseeger.scotlandyardinreallife.gateway.dto.GameDto
+import de.leonseeger.scotlandyardinreallife.gateway.dto.toDto
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

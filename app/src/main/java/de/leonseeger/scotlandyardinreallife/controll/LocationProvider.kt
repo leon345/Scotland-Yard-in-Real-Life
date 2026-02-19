@@ -1,4 +1,4 @@
-package de.leonseeger.scotlandyardinreallife.game.controll
+package de.leonseeger.scotlandyardinreallife.controll
 
 import android.Manifest
 import android.content.Context

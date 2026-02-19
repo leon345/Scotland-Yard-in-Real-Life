@@ -1,9 +1,9 @@
-package de.leonseeger.scotlandyardinreallife.game.gateway.dto
+package de.leonseeger.scotlandyardinreallife.gateway.dto
 
 import android.util.Log
-import de.leonseeger.scotlandyardinreallife.game.entity.Game
-import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
-import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
+import de.leonseeger.scotlandyardinreallife.entity.Game
+import de.leonseeger.scotlandyardinreallife.entity.GameStatus
+import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
 
 data class GameDto(
     val id: String = "",

@@ -1,12 +1,11 @@
-package de.leonseeger.scotlandyardinreallife.game
+package de.leonseeger.scotlandyardinreallife.ui.models
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
-import de.leonseeger.scotlandyardinreallife.game.entity.GameCatalogue
-import de.leonseeger.scotlandyardinreallife.game.entity.PlayerCatalogue
+import de.leonseeger.scotlandyardinreallife.entity.GameCatalogue
+import de.leonseeger.scotlandyardinreallife.entity.PlayerCatalogue
 
-class CreateGameViewModelFactory(
+class GameViewModelFactory(
     private val gameCatalogue: GameCatalogue,
     private val playerCatalogue: PlayerCatalogue
 ) : ViewModelProvider.Factory {

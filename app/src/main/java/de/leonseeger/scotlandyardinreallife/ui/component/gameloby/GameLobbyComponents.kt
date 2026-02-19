@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.game.entity.Player
+import de.leonseeger.scotlandyardinreallife.entity.Player
 import de.leonseeger.scotlandyardinreallife.ui.component.BodyText
 import de.leonseeger.scotlandyardinreallife.ui.component.LabelText
 
@@ -68,7 +68,7 @@ fun InvitationCodeCard(gameId: String) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = gameId,
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )

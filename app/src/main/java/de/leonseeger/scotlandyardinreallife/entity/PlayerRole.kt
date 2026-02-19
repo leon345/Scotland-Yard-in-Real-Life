@@ -1,4 +1,4 @@
-package de.leonseeger.scotlandyardinreallife.game.entity
+package de.leonseeger.scotlandyardinreallife.entity
 
 enum class PlayerRole {
     DETECTIVE, BANDIT;

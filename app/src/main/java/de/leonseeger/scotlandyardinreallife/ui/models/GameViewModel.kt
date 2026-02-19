@@ -1,17 +1,18 @@
-package de.leonseeger.scotlandyardinreallife.game.controll
+package de.leonseeger.scotlandyardinreallife.ui.models
 
 import android.content.Context
-import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.leonseeger.scotlandyardinreallife.game.entity.Game
-import de.leonseeger.scotlandyardinreallife.game.entity.GameCatalogue
-import de.leonseeger.scotlandyardinreallife.game.entity.GameSettings
-import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
-import de.leonseeger.scotlandyardinreallife.game.entity.Player
-import de.leonseeger.scotlandyardinreallife.game.entity.PlayerCatalogue
-import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
+import de.leonseeger.scotlandyardinreallife.controll.startLocationService
+import de.leonseeger.scotlandyardinreallife.controll.stopLocationService
+import de.leonseeger.scotlandyardinreallife.entity.Game
+import de.leonseeger.scotlandyardinreallife.entity.GameCatalogue
+import de.leonseeger.scotlandyardinreallife.entity.GameSettings
+import de.leonseeger.scotlandyardinreallife.entity.GameStatus
+import de.leonseeger.scotlandyardinreallife.entity.Player
+import de.leonseeger.scotlandyardinreallife.entity.PlayerCatalogue
+import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +20,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.maplibre.geojson.Point
-import de.leonseeger.scotlandyardinreallife.game.controll.LocationService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import org.maplibre.android.geometry.LatLng
@@ -33,7 +33,7 @@ class CreateGameViewModel(
     val gamestate: StateFlow<Game?> = _gameState.asStateFlow()
 
     private val _players =
-        MutableStateFlow<List<Player>>(emptyList()) //TODO Backing Property Patter
+        MutableStateFlow<List<Player>>(emptyList())
     val players: StateFlow<List<Player>> = _players.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
@@ -45,7 +45,7 @@ class CreateGameViewModel(
     private val _currentPlayerId = MutableStateFlow<String?>(null)
     val currentPlayerId: StateFlow<String?> = _currentPlayerId.asStateFlow()
 
-    private val _gameSettings = MutableStateFlow(GameSettings.DEFAULT)
+    private val _gameSettings = MutableStateFlow(GameSettings.Companion.DEFAULT)
     val gameSettings: StateFlow<GameSettings> = _gameSettings.asStateFlow()
 
     private val _playArea = MutableStateFlow<List<Point>>(mutableListOf<Point>())
@@ -113,7 +113,7 @@ class CreateGameViewModel(
 
     }
 
-    fun getCurrPlayerRole(): PlayerRole{
+    fun getCurrPlayerRole(): PlayerRole {
         val currPlayer = players.value.find { player -> player.id == currentPlayerId.value }
         if(currPlayer != null)
             return currPlayer.role

@@ -1,4 +1,4 @@
-package de.leonseeger.scotlandyardinreallife.game.controll
+package de.leonseeger.scotlandyardinreallife.controll
 
 import android.Manifest
 import android.app.Notification
@@ -10,10 +10,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -26,11 +26,10 @@ import com.google.android.gms.location.Priority
 import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.MainActivity
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.game.controll.LocationService.Companion.TAG
-import de.leonseeger.scotlandyardinreallife.game.entity.Player
-import de.leonseeger.scotlandyardinreallife.game.entity.PlayerCatalogue
-import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
-import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
+import de.leonseeger.scotlandyardinreallife.entity.Player
+import de.leonseeger.scotlandyardinreallife.entity.PlayerCatalogue
+import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
+import de.leonseeger.scotlandyardinreallife.gateway.FirebaseGateway
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -179,7 +178,7 @@ class LocationService : Service() {
 
 
         if (ActivityCompat.checkSelfPermission(
-                this, android.Manifest.permission.ACCESS_FINE_LOCATION
+                this, Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             Log.e(TAG, "Location permission not granted! Stopping service.")
@@ -205,7 +204,7 @@ class LocationService : Service() {
 
     fun getLastKnownLocation(onResult: (Location?) -> Void){
         if(ActivityCompat.checkSelfPermission(
-                this, android.Manifest.permission.ACCESS_FINE_LOCATION
+                this, Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED){
             Log.e(TAG, "Location permission not granted")
             onResult(null)
@@ -273,7 +272,7 @@ private fun checkLocationPermissions(context: Context): Boolean {
 }
 
 private fun requestLocationPermissions(
-    launcher: androidx.activity.result.ActivityResultLauncher<Array<String>>
+    launcher: ActivityResultLauncher<Array<String>>
 ) {
     val permissions = mutableListOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
