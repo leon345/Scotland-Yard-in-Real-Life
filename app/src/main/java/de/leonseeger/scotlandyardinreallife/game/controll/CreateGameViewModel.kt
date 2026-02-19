@@ -20,6 +20,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.maplibre.geojson.Point
 import de.leonseeger.scotlandyardinreallife.game.controll.LocationService
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.geojson.Polygon
 import org.maplibre.turf.TurfJoins
@@ -48,6 +50,8 @@ class CreateGameViewModel(
 
     private val _playArea = MutableStateFlow<List<Point>>(mutableListOf<Point>())
     val playArea: StateFlow<List<Point>> = _playArea.asStateFlow()
+
+    private var gameTimerJob: Job? = null
 
     private lateinit var serviceContext: Context
     var inBounds = true
@@ -123,6 +127,13 @@ class CreateGameViewModel(
                     if (game == null) {
                         _error.value = "Spiel wurde nicht gefunden"
                     }
+                    if (game?.status == GameStatus.RUNNING) {
+                        startGameTimer()
+                    }
+
+                    if (game?.status == GameStatus.FINISHED) {
+                        gameTimerJob?.cancel()
+                    }
                 }
             } catch (e: Exception) {
                 _error.value = "Fehler beim Laden des Spiels: ${e.message}"
@@ -174,6 +185,18 @@ class CreateGameViewModel(
             }
         }
     }
+
+    private fun startGameTimer() {
+        gameTimerJob?.cancel()
+
+        val durationMillis = gameSettings.value.gameDuration * 60_000L
+
+        gameTimerJob = viewModelScope.launch {
+            delay(durationMillis)
+            endGame()
+        }
+    }
+
     fun deleteGame() {
         viewModelScope.launch {
             _gameState.value?.let { game ->
@@ -188,6 +211,8 @@ class CreateGameViewModel(
     }
 
     fun endGame(){
+        gameTimerJob?.cancel()
+
         viewModelScope.launch {
             _gameState.value?.let{ game ->
                 val result = withContext(Dispatchers.IO) {
