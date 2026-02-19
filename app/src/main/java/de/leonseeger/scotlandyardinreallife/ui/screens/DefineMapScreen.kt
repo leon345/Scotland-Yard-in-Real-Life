@@ -171,6 +171,8 @@ fun PlayareaDefinitionMap(
                 )
             }
             Button(
+                colors = ButtonColors(colorResource(R.color.detective_color_dark), contentColor = colorResource(R.color.neon_yellow),
+                    disabledContainerColor = colorResource(R.color.grey), disabledContentColor = colorResource(R.color.black)),
                 onClick = {
                     val polygon = mapData.getPolygonPoints()
                     if (polygon.size > 3)

@@ -44,7 +44,7 @@ fun GameLobbyScreen(
     playerId: String,
     modifier: Modifier = Modifier,
     playArea: List<Point>?,
-    onStartGame: (Game, String) -> Unit,
+    onStartGame: () -> Unit,
     onNavigateToSettings: () -> Unit = {}
 ) {
     val gameState by viewModel.gamestate.collectAsState()
@@ -63,7 +63,7 @@ fun GameLobbyScreen(
 
     LaunchedEffect(gameState?.status) {
         if (gameState?.status == GameStatus.RUNNING) {
-            onStartGame(gameState!!, playerId);
+            onStartGame();
         }
     }
 
@@ -119,7 +119,7 @@ fun GameLobbyScreen(
                 PrimaryButton(
                     text = stringResource(R.string.start_game), onClick = {
                         viewModel.startGame()
-                        onStartGame(game, playerId)
+                        onStartGame()
                     }, enabled = players.size >= 2, icon = Icons.Default.PlayArrow
                 )
 
