@@ -24,17 +24,18 @@ import androidx.navigation.navArgument
 import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.game.CreateGameViewModelFactory
 import de.leonseeger.scotlandyardinreallife.game.controll.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
 import de.leonseeger.scotlandyardinreallife.game.gateway.FirebaseGateway
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMap
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
 import de.leonseeger.scotlandyardinreallife.ui.screens.DefineMapScreen
+import de.leonseeger.scotlandyardinreallife.ui.screens.GameEndScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameLobbyScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameRunningScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameSettingScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.JoinGameScreen
-import de.leonseeger.scotlandyardinreallife.ui.screens.startLocationService
 import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
 import org.maplibre.android.MapLibre
 import kotlin.getValue
@@ -171,8 +172,7 @@ fun AppNavigation(
                 gameId = if (gameCode.isNullOrEmpty()) null else gameCode,
                 playerId = playerId,
                 playArea = null,
-                onStartGame = { game, currPlayerId ->
-                    //TODO start location service here?
+                onStartGame = { ->
                     navController.navigate(NavigationRoutes.GAME_RUNNING)
                 },
                 onNavigateToSettings = {
@@ -193,9 +193,34 @@ fun AppNavigation(
         composable(
             NavigationRoutes.GAME_RUNNING
         ) {
-            //TODO start location service here?
             GameRunningScreen(
-                viewModel = viewModel
+                viewModel = viewModel,
+                onGameEnd = { winnerTeam ->
+                    var msg: String
+                    when (winnerTeam){
+                        PlayerRole.DETECTIVE -> msg = "Die Detektive haben gewonnen"
+                        PlayerRole.BANDIT -> msg = "Die Banditen sind entkommen"
+                        null -> msg = "Unentschieden"
+                    }
+                    navController.navigate(NavigationRoutes.gameEnding(msg))
+                }
+            )
+        }
+
+        composable(
+            NavigationRoutes.GAME_END,
+            arguments = listOf(
+                navArgument("winMessage") {
+                    type = NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val msg = backStackEntry.arguments?.getString("winMessage") ?: "Unentschieden"
+            GameEndScreen(
+                winMsg = msg,
+                onBackHome = {
+                    navController.navigate(NavigationRoutes.HOME)
+                }
             )
         }
     }

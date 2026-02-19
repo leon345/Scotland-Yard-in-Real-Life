@@ -3,6 +3,7 @@ package de.leonseeger.scotlandyardinreallife.game.gateway.dto
 import android.util.Log
 import de.leonseeger.scotlandyardinreallife.game.entity.Game
 import de.leonseeger.scotlandyardinreallife.game.entity.GameStatus
+import de.leonseeger.scotlandyardinreallife.game.entity.PlayerRole
 
 data class GameDto(
     val id: String = "",
@@ -12,7 +13,8 @@ data class GameDto(
     val players: List<PlayerDto> = emptyList(),
     val owner: PlayerDto? = null,
     val counter: Int = 0,
-    val settings: GameSettingDto? = null
+    val settings: GameSettingDto? = null,
+    val gameWinner: PlayerRole? = null
 ) {
     fun toEntity(): Game = Game(
         id = id,
@@ -27,7 +29,8 @@ data class GameDto(
         owner = owner?.toEntity() ?: throw IllegalArgumentException("Owner cannot be null"),
         counter = counter,
         polygon = polygon.map { it.toPointEntity() },
-        settings = settings?.toEntity() ?: throw IllegalArgumentException("Settings cannot be null")
+        settings = settings?.toEntity() ?: throw IllegalArgumentException("Settings cannot be null"),
+        gameWinner = gameWinner
     )
 
 }
@@ -40,5 +43,6 @@ fun Game.toDto(): GameDto = GameDto(
     owner = owner.toDto(),
     counter = counter,
     settings = settings.toDto(),
-    polygon = polygon.map { it.toDto() }
+    polygon = polygon.map { it.toDto() },
+    gameWinner = gameWinner
 )

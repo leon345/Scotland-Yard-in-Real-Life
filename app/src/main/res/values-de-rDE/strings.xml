@@ -33,4 +33,9 @@
     <string name="confirm">Bestätigen</string>
     <string name="define_playarea">Spielbereich festlegen</string>
     <string name="bandit">Bandit</string>
+    <string name="found">Gefunden!</string>
+    <string name="confirm_found">Ja, Gefunden</string>
+    <string name="abort">Abbrechen</string>
+    <string name="foud_question">Wurdest du gefunden?</string>
+    <string name="back_home">Zurück zum Hauptmenü</string>
 </resources>
