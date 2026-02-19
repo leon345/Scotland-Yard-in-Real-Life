@@ -32,14 +32,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.entity.GameSettings
 import de.leonseeger.scotlandyardinreallife.ui.component.LabelText
 import de.leonseeger.scotlandyardinreallife.ui.component.NumericTextField
 import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
 import de.leonseeger.scotlandyardinreallife.ui.component.SecondaryButton
 import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle
+import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
 
+/**
+ * Composable-Screen, der die Konfiguration der [GameSettings] mit validierten
+ * Eingabefeldern für Spieldauer und Banditen-Offenbarungsintervall rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun GameSettingScreen(
     viewModel: CreateGameViewModel, modifier: Modifier = Modifier, onNavigateBack: () -> Unit
@@ -169,6 +177,14 @@ fun GameSettingScreen(
     }
 }
 
+/**
+ * Composable, das ein beschriftetes numerisches Eingabefeld mit
+ * Beschreibungstext als wiederverwendbare Einstellungskomponente rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
+ */
 @Composable
 private fun SettingInputField(
     label: String,

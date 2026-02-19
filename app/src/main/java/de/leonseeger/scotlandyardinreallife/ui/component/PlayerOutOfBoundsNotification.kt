@@ -17,6 +17,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.leonseeger.scotlandyardinreallife.R
 
+/**
+ * Composable, das eine Vollbild-Überlagerung rendert, wenn ein [Player] das definierte Spielfeld-Polygon verlässt.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
+ */
 @Composable
 fun PlayerOutOfBoundsNotification() {
     Column(

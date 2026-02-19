@@ -1,9 +1,15 @@
 package de.leonseeger.scotlandyardinreallife.gateway.dto
 
-import android.util.Log
 import de.leonseeger.scotlandyardinreallife.entity.Player
 import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
 
+/**
+ * DTO-Entity, die eine [Player]-Instanz für die Firebase-Persistenzschicht serialisiert und mittels [toEntity] in die Entity zurückführt.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 data class PlayerDto(
     val id: String = "",
     val currentLocation: LocationDto? = null,
@@ -15,7 +21,6 @@ data class PlayerDto(
         role = try {
             PlayerRole.valueOf(role)
         } catch (e: IllegalArgumentException) {
-            Log.e("PlayerDto", "Invalid PlayerRole: $role", e)
             PlayerRole.DETECTIVE
         }
     )

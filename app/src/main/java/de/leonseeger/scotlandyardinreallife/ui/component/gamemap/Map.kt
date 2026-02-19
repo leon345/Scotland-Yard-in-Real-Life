@@ -1,11 +1,11 @@
 package de.leonseeger.scotlandyardinreallife.ui.component.gamemap
 
+import android.content.Context
+import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import  android.content.Context
-import android.graphics.BitmapFactory
-import android.util.Log
 import de.leonseeger.scotlandyardinreallife.BuildConfig
 import de.leonseeger.scotlandyardinreallife.R
 import de.leonseeger.scotlandyardinreallife.entity.Player
@@ -34,6 +34,14 @@ import org.maplibre.geojson.FeatureCollection
 import org.maplibre.geojson.Point
 import org.maplibre.geojson.Polygon
 
+/**
+ * Kapselt den MapLibre-Kartenzustand und stellt Composable- sowie Hilfsmethoden zur
+ * Verwaltung von Spielfeld-Polygon, Spieler-Markern und Echtzeit-Positionen bereit.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
+ */
 class PlayMapData {
     private val polygonMapSrcName = "playarea-src"
     private val polygonFillName = "playarea-fill"

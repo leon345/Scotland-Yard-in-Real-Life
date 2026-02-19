@@ -34,20 +34,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
-import de.leonseeger.scotlandyardinreallife.ui.models.LocationPermissionState
-import de.leonseeger.scotlandyardinreallife.ui.models.MapLocationViewModel
-import de.leonseeger.scotlandyardinreallife.ui.models.isPointInsidePolygon
 import de.leonseeger.scotlandyardinreallife.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
 import de.leonseeger.scotlandyardinreallife.ui.component.CenteredLoadingIndicator
 import de.leonseeger.scotlandyardinreallife.ui.component.EndGameDialog
 import de.leonseeger.scotlandyardinreallife.ui.component.PlayerOutOfBoundsNotification
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
+import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.ui.models.LocationPermissionState
+import de.leonseeger.scotlandyardinreallife.ui.models.MapLocationViewModel
+import de.leonseeger.scotlandyardinreallife.ui.models.isPointInsidePolygon
 import org.maplibre.android.geometry.LatLng
 
 /**
- * The Map shown before the Game Lobby for the Host, to define the Playarea
+ * Composable-Screen, der den Berechtigungsstatus prüft, den [LocationService] startet
+ * und die Spielkarte für ein laufendes [Game] rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
  */
 @Composable
 fun GameRunningScreen(
@@ -72,10 +77,9 @@ fun GameRunningScreen(
         ) { granted ->
             mapLocationModel.onPermissionResult(granted)
         }
-    //switch action based on permission state
+
     when (permissionGranted) {
-        LocationPermissionState.Granted -> { //show game screen
-            /*Launching location service */
+        LocationPermissionState.Granted -> {
             val gameId = game?.id
             val playerId = currPlayerId
 
@@ -84,7 +88,7 @@ fun GameRunningScreen(
                     viewModel.startLocationServices(serviceContext = serviceContext)
                     Log.d("Location Service", "Started Location Service")
                 }
-            /*-------*/
+
             RunningGameScreenComponent(viewModel, mapLocationModel, serviceContext)
         }
 
@@ -102,7 +106,14 @@ fun GameRunningScreen(
     }
 }
 
-
+/**
+ * Composable, das nach erfolgreicher Standortermittlung die [GameMap] rendert
+ * und bis dahin einen Ladeindikator anzeigt.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
+ */
 @Composable
 fun RunningGameScreenComponent(
     viewModel: CreateGameViewModel,
@@ -124,6 +135,14 @@ fun RunningGameScreenComponent(
     }
 }
 
+/**
+ * Composable, das die MapLibre-Spielkarte mit Echtzeit-Spielerpositionen, Rollendarstellung,
+ * Out-of-Bounds-Erkennung und Spielende-Dialog rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
+ */
 @Composable
 fun GameMap(
     startLocation: Location,
@@ -167,7 +186,6 @@ fun GameMap(
                 .fillMaxSize()
                 .padding(12.dp)
         ) {
-            /*---Start Role Box---*/
             Box(
                 modifier = Modifier
                     .border(
@@ -194,8 +212,6 @@ fun GameMap(
                     fontWeight = FontWeight.Medium
                 )
             }
-            /*---End Role Box---*/
-            /*---Start Controls---*/
             Row(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

@@ -15,8 +15,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,14 +34,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.ui.models.MapLocationViewModel
-import de.leonseeger.scotlandyardinreallife.ui.models.LocationPermissionState
 import de.leonseeger.scotlandyardinreallife.ui.component.CenteredLoadingIndicator
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
+import de.leonseeger.scotlandyardinreallife.ui.models.LocationPermissionState
+import de.leonseeger.scotlandyardinreallife.ui.models.MapLocationViewModel
 import org.maplibre.geojson.Point
 
 /**
- * The Map shown before the Game Lobby for the Host, to define the Playarea
+ * Composable-Screen, der dem Host das interaktive Einzeichnen des Spielfeld-Polygons
+ * auf einer Karte ermöglicht und Standortberechtigungen vor der Darstellung prüft.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
  */
 @Composable
 fun DefineMapScreen(
@@ -76,7 +81,14 @@ fun DefineMapScreen(
     }
 }
 
-
+/**
+ * Composable, das nach erfolgreicher Standortermittlung die [PlayareaDefinitionMap] rendert
+ * und bis dahin einen Ladeindikator anzeigt.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
+ */
 @Composable
 fun DefiningMap(viewModel: MapLocationViewModel, onMapDefined: (List<Point>) -> Unit) {
     val location by viewModel.currentLocation.collectAsState()
@@ -93,6 +105,14 @@ fun DefiningMap(viewModel: MapLocationViewModel, onMapDefined: (List<Point>) -> 
     }
 }
 
+/**
+ * Composable, das die interaktive MapLibre-Karte zur Polygon-Definition mit
+ * Undo- und Bestätigungs-Steuerelementen rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
+ */
 @Composable
 fun PlayareaDefinitionMap(
     context: Context,

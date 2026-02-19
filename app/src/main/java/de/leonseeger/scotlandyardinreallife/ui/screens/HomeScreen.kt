@@ -20,7 +20,14 @@ import de.leonseeger.scotlandyardinreallife.ui.component.SecondaryButton
 import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle
 import de.leonseeger.scotlandyardinreallife.ui.component.SubheadingText
 
-
+/**
+ * Composable-Screen, der den Haupteinstiegspunkt der App mit Optionen zum
+ * Erstellen und Beitreten eines [Game] rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun HomeScreen(
     onCreateGame: () -> Unit,

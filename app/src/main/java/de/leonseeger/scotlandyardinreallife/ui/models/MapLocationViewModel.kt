@@ -10,6 +10,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel, das den aktuellen GPS-Standort und den Berechtigungsstatus für
+ * Standortzugriffe über den [LocationProvider] verwaltet.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
+ */
 class MapLocationViewModel(private val context: Application) : AndroidViewModel(context) {
 
     private val locationService = LocationProvider(context)
@@ -53,6 +61,14 @@ class MapLocationViewModel(private val context: Application) : AndroidViewModel(
     }
 }
 
+/**
+ * Sealed Interface, das die drei möglichen Zustände der Standortberechtigung
+ * ([Granted], [Denied], [RequestRequired]) typsicher abbildet.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
+ */
 sealed interface LocationPermissionState {
     object Granted : LocationPermissionState
     object Denied : LocationPermissionState

@@ -5,8 +5,11 @@ import androidx.compose.runtime.Composable
 
 
 /**
- * Used for showing an Error, when the location permission is denied,
- * to show explanation and redirect back to home
+ * Composable-Screen, der einen Hinweis rendert, wenn der Nutzer die Standortberechtigung verweigert hat.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
  */
 @Composable
 fun PermissionDeniedScreen (){

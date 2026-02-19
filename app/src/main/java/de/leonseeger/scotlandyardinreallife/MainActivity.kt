@@ -18,11 +18,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.firebase.firestore.FirebaseFirestore
-import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
 import de.leonseeger.scotlandyardinreallife.gateway.FirebaseGateway
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
+import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.ui.models.GameViewModelFactory
 import de.leonseeger.scotlandyardinreallife.ui.screens.DefineMapScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameEndScreen
@@ -33,13 +33,20 @@ import de.leonseeger.scotlandyardinreallife.ui.screens.HomeScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.JoinGameScreen
 import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
 import org.maplibre.android.MapLibre
-import kotlin.getValue
 
+/**
+ * Single-Activity, die den NavController und den [CreateGameViewModel] initialisiert
+ * sowie MapLibre und das App-Theme konfiguriert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger & Jannes Schophuis
+ */
 class MainActivity : ComponentActivity() {
     private val firebaseGateway = FirebaseGateway(FirebaseFirestore.getInstance())
     private val gameLobbyViewModel: CreateGameViewModel by viewModels {
         GameViewModelFactory(
-            gameCatalogue = firebaseGateway, playerCatalogue = firebaseGateway
+            gameCatalog = firebaseGateway, playerCatalog = firebaseGateway
         )
     }
     private lateinit var navController: NavHostController
@@ -67,6 +74,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Composable, das den gesamten Navigations-Graphen der App über einen [NavHost]
+ * mit allen Routen aus [NavigationRoutes] definiert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
+ */
 
 @Composable
 fun AppNavigation(

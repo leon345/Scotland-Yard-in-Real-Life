@@ -38,6 +38,14 @@ import de.leonseeger.scotlandyardinreallife.entity.Player
 import de.leonseeger.scotlandyardinreallife.ui.component.BodyText
 import de.leonseeger.scotlandyardinreallife.ui.component.LabelText
 
+/**
+ * Composable, das den teilbaren Einladungscode eines [Game] als anklickbare Karte darstellt
+ * und den nativen Android-Share-Dialog öffnet.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun InvitationCodeCard(gameId: String) {
     val context = LocalContext.current
@@ -83,6 +91,14 @@ fun InvitationCodeCard(gameId: String) {
     }
 }
 
+/**
+ * Composable, das die Liste aller [Player] eines [Game] in einer scrollbaren
+ * LazyColumn rendert und den Host visuell hervorhebt.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun PlayersList(
     players: List<Player>,
@@ -131,6 +147,14 @@ fun PlayersList(
     }
 }
 
+/**
+ * Composable, das einen einzelnen [Player] als Listenelement mit Rolle
+ * und optionaler Host-Kennzeichnung darstellt.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun PlayerItem(player: Player, isOwner: Boolean, onClick: () -> Unit = {}) {
     Card(

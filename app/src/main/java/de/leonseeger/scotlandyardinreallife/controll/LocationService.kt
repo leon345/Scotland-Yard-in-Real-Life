@@ -27,7 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.MainActivity
 import de.leonseeger.scotlandyardinreallife.R
 import de.leonseeger.scotlandyardinreallife.entity.Player
-import de.leonseeger.scotlandyardinreallife.entity.PlayerCatalogue
+import de.leonseeger.scotlandyardinreallife.entity.PlayerCatalog
 import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
 import de.leonseeger.scotlandyardinreallife.gateway.FirebaseGateway
 import kotlinx.coroutines.CoroutineDispatcher
@@ -38,10 +38,16 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-
+/**
+ * Foreground-Service zur kontinuierlichen GPS-Standorterfassung und Echtzeit-Synchronisation
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Jannes Schophuis & Leon Seeger
+ */
 class LocationService : Service() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var playerCatalogue: PlayerCatalogue
+    private lateinit var playerCatalog: PlayerCatalog
 
     private var dispatcher: CoroutineDispatcher = Dispatchers.IO
     private lateinit var serviceScope: CoroutineScope
@@ -60,9 +66,7 @@ class LocationService : Service() {
 
         private const val NOTIFICATION_CHANNEL_ID = "location_tracking_channel"
         private const val NOTIFICATION_ID = 1001
-        private const val LOCATION_UPDATE_INTERVAL_MS = 5000L
-        private const val MIN_UPDATE_INTERVAL_MS = 800L
-        private const val MAX_UPDATE_DELAY_MS = 25000L
+
 
     }
 
@@ -70,7 +74,7 @@ class LocationService : Service() {
         super.onCreate()
         serviceScope = CoroutineScope(SupervisorJob() + dispatcher)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        playerCatalogue = FirebaseGateway(FirebaseFirestore.getInstance())
+        playerCatalog = FirebaseGateway(FirebaseFirestore.getInstance())
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
@@ -153,13 +157,13 @@ class LocationService : Service() {
     private fun getAndUpdatePlayer(gameId: String, playerId: String, location: Location) {
         serviceScope.launch {
             try {
-                val currenPlayer: Player? = playerCatalogue.getPlayer(gameId, playerId).first()
+                val currenPlayer: Player? = playerCatalog.getPlayer(gameId, playerId).first()
                 if (currenPlayer == null) {
                     Log.e(TAG, "Player not found in database: $playerId")
                     return@launch
                 }
                 val updatedPlayer = currenPlayer.copy(currentLocation = location)
-                val result = playerCatalogue.updatePlayer(gameId, updatedPlayer)
+                val result = playerCatalog.updatePlayer(gameId, updatedPlayer)
                 result.onFailure {
                     Log.e(TAG, "Failed to update player: $updatedPlayer", it)
                 }

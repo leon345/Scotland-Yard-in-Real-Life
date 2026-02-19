@@ -1,6 +1,5 @@
 package de.leonseeger.scotlandyardinreallife.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -23,10 +22,17 @@ private val LightColorScheme = lightColorScheme(
     tertiary = Pink40
 )
 
+/**
+ * Composable, das das Material3-Theme der App mit Unterstützung für dynamische
+ * Farben sowie hellem und dunklem Farbschema bereitstellt.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ *
+ */
 @Composable
 fun ScotlandYardInRealLifeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {

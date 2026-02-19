@@ -9,6 +9,13 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import de.leonseeger.scotlandyardinreallife.R
 
+/**
+ * Composable, das einen konfigurierbaren Bestätigungs-Dialog zum Beenden eines [Game] rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
+ */
 @Composable
 fun EndGameDialog(
     onDismissRequest: () -> Unit,

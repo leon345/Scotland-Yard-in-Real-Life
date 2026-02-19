@@ -1,7 +1,5 @@
 package de.leonseeger.scotlandyardinreallife.ui.component
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,6 +20,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.leonseeger.scotlandyardinreallife.R
 
+/**
+ * Composable, das ein einzeiliges Texteingabefeld ausschließlich für numerische Eingaben mit optionaler Fehleranzeige rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger & Jannes Schophuis
+ */
 @Composable
 fun NumericTextField(
     value: String,

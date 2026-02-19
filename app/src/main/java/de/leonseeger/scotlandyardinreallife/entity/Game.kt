@@ -2,6 +2,13 @@ package de.leonseeger.scotlandyardinreallife.entity
 
 import org.maplibre.geojson.Point
 
+/**
+ * Entity-Objekt, das ein aktives Scotland-Yard-Spiel repräsentiert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger & Jannes Schophuis
+ */
 data class Game(
     val id: String,
     val createdAt: Long,

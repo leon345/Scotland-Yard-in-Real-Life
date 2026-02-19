@@ -2,12 +2,10 @@ package de.leonseeger.scotlandyardinreallife.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -21,6 +19,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.leonseeger.scotlandyardinreallife.R
 
+/**
+ * Composable-Screen, der das Spielergebnis mit einer Gewinnernachricht und einer
+ * Navigationsschaltfläche zum Hauptmenü rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
+ */
 @Composable
 fun GameEndScreen(
     winMsg: String,
@@ -33,7 +39,10 @@ fun GameEndScreen(
     ) {
         Column(
             modifier = Modifier
-                .background(colorResource(R.color.detective_color_bg), shape = RoundedCornerShape(12.dp))
+                .background(
+                    colorResource(R.color.detective_color_bg),
+                    shape = RoundedCornerShape(12.dp)
+                )
                 .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center

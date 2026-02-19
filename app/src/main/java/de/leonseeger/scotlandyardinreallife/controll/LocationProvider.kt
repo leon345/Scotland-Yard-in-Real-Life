@@ -11,6 +11,13 @@ import com.google.android.gms.location.Priority
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
+/**
+ * Stellt den aktuellen GPS-Standort des Geräts bereit und abstrahiert den Zugriff
+ * auf den [com.google.android.gms.location.FusedLocationProviderClient] von Google Play Services.
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ * @author TODO Author
+ */
+
 class LocationProvider(private val context: Context) {
 
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
@@ -32,7 +39,6 @@ class LocationProvider(private val context: Context) {
     suspend fun getCurrentLocation(): Location? =
         suspendCancellableCoroutine { cont ->
             try {
-                // Guard: only call if permissions are granted
                 if (!hasLocationPermissions()) {
                     cont.resume(null)
                     return@suspendCancellableCoroutine

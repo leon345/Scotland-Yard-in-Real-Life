@@ -1,10 +1,16 @@
 package de.leonseeger.scotlandyardinreallife.gateway.dto
 
-import android.util.Log
 import de.leonseeger.scotlandyardinreallife.entity.Game
 import de.leonseeger.scotlandyardinreallife.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
 
+/**
+ * DTO-Entity, die eine [Game]-Instanz für die Firebase-Persistenzschicht serialisiert und mittels [toEntity] in die Entity zurückführt.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger & Jannes Schophuis
+ */
 data class GameDto(
     val id: String = "",
     val createdAt: Long = 0L,
@@ -22,7 +28,6 @@ data class GameDto(
         status = try {
             GameStatus.valueOf(this.status)
         } catch (e: IllegalArgumentException) {
-            Log.e("GameDto", "Invalid GameStatus: $status", e)
             GameStatus.WAITING
         },
         players = players.map { it.toEntity() },

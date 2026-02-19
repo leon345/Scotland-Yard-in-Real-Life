@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,6 +15,13 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import de.leonseeger.scotlandyardinreallife.R
 
+/**
+ * Composable, das einen primären Button im App-Design mit optionalem Icon rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger & Jannes Schophuis
+ */
 @Composable
 fun PrimaryButton(
     text: String,
@@ -48,6 +53,13 @@ fun PrimaryButton(
     }
 }
 
+/**
+ * Composable, das einen sekundären Button im App-Design mit optionalem Icon rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author TODO Author
+ */
 @Composable
 fun SecondaryButton(
     text: String,

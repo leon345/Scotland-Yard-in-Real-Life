@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
 import de.leonseeger.scotlandyardinreallife.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.ui.component.ErrorText
 import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
@@ -33,8 +32,17 @@ import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle
 import de.leonseeger.scotlandyardinreallife.ui.component.SubheadingText
 import de.leonseeger.scotlandyardinreallife.ui.component.gameloby.InvitationCodeCard
 import de.leonseeger.scotlandyardinreallife.ui.component.gameloby.PlayersList
+import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
 import org.maplibre.geojson.Point
 
+/**
+ * Composable-Screen, der die Spiellobby mit Einladungscode, Spielerliste und
+ * Spielstart-Steuerung für Host und beitretende Spieler rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun GameLobbyScreen(
     viewModel: CreateGameViewModel,

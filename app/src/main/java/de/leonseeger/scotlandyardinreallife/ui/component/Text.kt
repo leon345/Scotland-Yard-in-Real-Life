@@ -8,6 +8,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 
+/**
+ * Composable, das einen fettgedruckten Abschnittstitel im `headlineMedium`-Stil rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun SectionTitle(
     text: String,
@@ -21,6 +28,13 @@ fun SectionTitle(
     )
 }
 
+/**
+ * Composable, das eine halbfette Zwischenüberschrift im `headlineSmall`-Stil rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun SubheadingText(
     text: String,
@@ -34,6 +48,13 @@ fun SubheadingText(
     )
 }
 
+/**
+ * Composable, das einen Fehlertext in der Error-Farbe des Material-Themes rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun ErrorText(
     text: String,
@@ -49,6 +70,13 @@ fun ErrorText(
     )
 }
 
+/**
+ * Composable, das einen Label-Text im `labelMedium`-Stil mit konfigurierbarer Farbe rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun LabelText(
     text: String,
@@ -63,6 +91,13 @@ fun LabelText(
     )
 }
 
+/**
+ * Composable, das einen Fließtext im `bodyLarge`-Stil mit konfigurierbarem Schriftgewicht rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun BodyText(
     text: String,

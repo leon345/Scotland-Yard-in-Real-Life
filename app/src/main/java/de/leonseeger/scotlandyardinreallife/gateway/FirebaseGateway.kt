@@ -4,10 +4,10 @@ import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import de.leonseeger.scotlandyardinreallife.entity.Game
-import de.leonseeger.scotlandyardinreallife.entity.GameCatalogue
+import de.leonseeger.scotlandyardinreallife.entity.GameCatalog
 import de.leonseeger.scotlandyardinreallife.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.entity.Player
-import de.leonseeger.scotlandyardinreallife.entity.PlayerCatalogue
+import de.leonseeger.scotlandyardinreallife.entity.PlayerCatalog
 import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
 import de.leonseeger.scotlandyardinreallife.gateway.dto.GameDto
 import de.leonseeger.scotlandyardinreallife.gateway.dto.toDto
@@ -17,7 +17,15 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.tasks.await
 
-class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogue, GameCatalogue {
+/**
+ * Firebase-Implementierung der [PlayerCatalog]- und [GameCatalog]-Schnittstellen,
+ * die alle CRUD-Operationen für [Game]- und [Player]-Entities über Firestore realisiert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger & Jannes Schophuis
+ */
+class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalog, GameCatalog {
     private val gamesCollection = firestore.collection("games")
 
     override suspend fun addPlayerToGame(
@@ -25,7 +33,6 @@ class FirebaseGateway(private val firestore: FirebaseFirestore) : PlayerCatalogu
     ): Result<String> {
         return try {
             val gameRef = gamesCollection.document(gameId);
-            Log.d("FirebaseGateway", "Adding player to game with ID $gameId: $player")
             var generatedId = ""
             firestore.runTransaction { transaction ->
                 val snapshot = transaction.get(gameRef)

@@ -7,27 +7,36 @@ import androidx.lifecycle.viewModelScope
 import de.leonseeger.scotlandyardinreallife.controll.startLocationService
 import de.leonseeger.scotlandyardinreallife.controll.stopLocationService
 import de.leonseeger.scotlandyardinreallife.entity.Game
-import de.leonseeger.scotlandyardinreallife.entity.GameCatalogue
+import de.leonseeger.scotlandyardinreallife.entity.GameCatalog
 import de.leonseeger.scotlandyardinreallife.entity.GameSettings
 import de.leonseeger.scotlandyardinreallife.entity.GameStatus
 import de.leonseeger.scotlandyardinreallife.entity.Player
-import de.leonseeger.scotlandyardinreallife.entity.PlayerCatalogue
+import de.leonseeger.scotlandyardinreallife.entity.PlayerCatalog
 import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.maplibre.geojson.Point
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import org.maplibre.android.geometry.LatLng
+import org.maplibre.geojson.Point
 import org.maplibre.geojson.Polygon
 import org.maplibre.turf.TurfJoins
 
+/**
+ * ViewModel, das den gesamten Spielzustand eines [Game] verwaltet und Operationen
+ * wie Erstellen, Beitreten, Starten und Beenden eines Spiels über [GameCatalog]
+ * und [PlayerCatalog] koordiniert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger & Jannes Schophuis
+ */
 class CreateGameViewModel(
-    private val gameCatalogue: GameCatalogue, private val playerCatalogue: PlayerCatalogue
+    private val gameCatalog: GameCatalog, private val playerCatalog: PlayerCatalog
 ) : ViewModel() {
     private val _gameState = MutableStateFlow<Game?>(null)
     val gamestate: StateFlow<Game?> = _gameState.asStateFlow()
@@ -77,7 +86,7 @@ class CreateGameViewModel(
                 gameWinner = null
             )
             val result = withContext(Dispatchers.IO) {
-                gameCatalogue.createGame(newGame)
+                gameCatalog.createGame(newGame)
             }
             result.onSuccess { gameId ->
                 _currentPlayerId.value = ownerId
@@ -98,7 +107,7 @@ class CreateGameViewModel(
                 id = playerId, currentLocation = null, role = PlayerRole.DETECTIVE
             )
             val result = withContext(Dispatchers.IO) {
-                playerCatalogue.addPlayerToGame(gameId, player)
+                playerCatalog.addPlayerToGame(gameId, player)
             }
             result.onSuccess { generatedId ->
                 _currentPlayerId.value = generatedId
@@ -123,7 +132,7 @@ class CreateGameViewModel(
     fun observeGame(gameId: String) {
         viewModelScope.launch {
             try {
-                gameCatalogue.getGameById(gameId).collect { game ->
+                gameCatalog.getGameById(gameId).collect { game ->
                     _gameState.value = game
                     if (game == null) {
                         _error.value = "Spiel wurde nicht gefunden"
@@ -144,7 +153,7 @@ class CreateGameViewModel(
 
         viewModelScope.launch {
             try {
-                playerCatalogue.getPlayersInGame(gameId).collect { players ->
+                playerCatalog.getPlayersInGame(gameId).collect { players ->
                     _players.value = players ?: emptyList()
                     //faster location updates when out of bounds
                     val currPlayer = _players.value.find { it.id == _currentPlayerId.value }
@@ -178,7 +187,7 @@ class CreateGameViewModel(
                     return@launch
                 }
                 val result = withContext(Dispatchers.IO) {
-                    gameCatalogue.updateGameStatus(game.id, GameStatus.RUNNING)
+                    gameCatalog.updateGameStatus(game.id, GameStatus.RUNNING)
                 }
                 result.onFailure { exception ->
                     _error.value = "Fehler beim Starten des Spiels: ${exception.message}"
@@ -202,7 +211,7 @@ class CreateGameViewModel(
         viewModelScope.launch {
             _gameState.value?.let { game ->
                 val result = withContext(Dispatchers.IO) {
-                    gameCatalogue.deleteGame(game.id)
+                    gameCatalog.deleteGame(game.id)
                 }
                 result.onFailure { exception ->
                     _error.value = "Fehler beim Löschen des Spiels: ${exception.message}"
@@ -218,7 +227,7 @@ class CreateGameViewModel(
             _gameState.value?.let{ game ->
                 val result = withContext(Dispatchers.IO) {
                     _gameState.value?.gameWinner = winnerTeam
-                    gameCatalogue.endGame(game.id, winnerTeam)
+                    gameCatalog.endGame(game.id, winnerTeam)
                 }
                 result.onFailure { exception ->
                     _error.value = "Konnte Spiel nicht beenden: ${exception.message}"
@@ -235,7 +244,7 @@ class CreateGameViewModel(
             val updatedPlayer = player.copy(role = player.role.toggle())
 
             val result = withContext(Dispatchers.IO) {
-                playerCatalogue.updatePlayer(gameId, updatedPlayer)
+                playerCatalog.updatePlayer(gameId, updatedPlayer)
             }
 
             result.onFailure { exception ->
@@ -257,7 +266,7 @@ class CreateGameViewModel(
             _gameState.value?.let { curentgame ->
                 val updatedGame = curentgame.copy(settings = _gameSettings.value)
                 val result = withContext(Dispatchers.IO) {
-                    gameCatalogue.updateGame(updatedGame)
+                    gameCatalog.updateGame(updatedGame)
                 }
 
                 result.onSuccess {

@@ -1,6 +1,13 @@
 package de.leonseeger.scotlandyardinreallife.navigation
 
-
+/**
+ * Objekt, das alle Navigationsrouten der App als Konstanten
+ * und Hilfsfunktionen zur Routenkonstruktion mit Pfadparametern bereitstellt.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger & Jannes Schophuis
+ */
 object NavigationRoutes {
     const val HOME = "home"
     const val PRE_LOBBY = "pre_lobby" //defining play area
