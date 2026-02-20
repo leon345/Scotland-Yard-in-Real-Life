@@ -23,7 +23,9 @@ Für andere Betriebsysteme kann die offizielle Instalationanleitung unter https:
 
 ### Einrichtung
 
-Für die Bereitstellung muss im Verzeichnis .secure_files/ ein Signierungsschlüssel hinterlegt sowie die Datei release-keystore.properties konfiguriert werden.
+Für die Bereitstellung über die Fastlane Lane Beta  muss im Verzeichnis .secure_files/ ein Signierungsschlüssel hinterlegt sowie die Datei release-keystore.properties konfiguriert werden.
+
+
 
 1. Signierungsschlüssel anlegen
 
@@ -41,5 +43,9 @@ keyAlias=release
 keyPassword=<Passwort>
 
 
+Die Fastlane kann mit 
+
+`bash
+fastlane deploy`
 
     
