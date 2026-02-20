@@ -35,11 +35,14 @@ Den Keystore unter folgendem Pfad ablegen:
 
 2. release-keystore.properties konfigurieren
 
-text
+```
 storeFile=.secure_files/release-keystore.jks
 storePassword=<Passwort>
 keyAlias=release
 keyPassword=<Passwort>
+```
+
+
 
 
 Die Fastlane kann mit 
