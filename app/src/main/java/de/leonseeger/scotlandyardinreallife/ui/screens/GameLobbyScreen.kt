@@ -32,7 +32,7 @@ import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle
 import de.leonseeger.scotlandyardinreallife.ui.component.SubheadingText
 import de.leonseeger.scotlandyardinreallife.ui.component.gameloby.InvitationCodeCard
 import de.leonseeger.scotlandyardinreallife.ui.component.gameloby.PlayersList
-import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.ui.models.GameViewModel
 import org.maplibre.geojson.Point
 
 /**
@@ -45,7 +45,7 @@ import org.maplibre.geojson.Point
  */
 @Composable
 fun GameLobbyScreen(
-    viewModel: CreateGameViewModel,
+    viewModel: GameViewModel,
     gameId: String?,
     mode: String?,
     playerId: String,

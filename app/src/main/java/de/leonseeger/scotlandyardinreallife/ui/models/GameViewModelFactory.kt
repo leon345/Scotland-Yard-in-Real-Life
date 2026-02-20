@@ -6,7 +6,7 @@ import de.leonseeger.scotlandyardinreallife.entity.GameCatalog
 import de.leonseeger.scotlandyardinreallife.entity.PlayerCatalog
 
 /**
- * Factory, die den [CreateGameViewModel] mit den erforderlichen [GameCatalog]- und
+ * Factory, die den [GameViewModel] mit den erforderlichen [GameCatalog]- und
  * [PlayerCatalog]-Abhängigkeiten instanziiert.
  *
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
@@ -18,9 +18,9 @@ class GameViewModelFactory(
     private val playerCatalog: PlayerCatalog
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CreateGameViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(GameViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return CreateGameViewModel(gameCatalog, playerCatalog) as T
+            return GameViewModel(gameCatalog, playerCatalog) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

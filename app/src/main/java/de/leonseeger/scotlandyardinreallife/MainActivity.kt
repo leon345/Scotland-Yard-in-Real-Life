@@ -22,7 +22,7 @@ import de.leonseeger.scotlandyardinreallife.entity.PlayerRole
 import de.leonseeger.scotlandyardinreallife.gateway.FirebaseGateway
 import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
-import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.ui.models.GameViewModel
 import de.leonseeger.scotlandyardinreallife.ui.models.GameViewModelFactory
 import de.leonseeger.scotlandyardinreallife.ui.screens.DefineMapScreen
 import de.leonseeger.scotlandyardinreallife.ui.screens.GameEndScreen
@@ -35,7 +35,7 @@ import de.leonseeger.scotlandyardinreallife.ui.theme.ScotlandYardInRealLifeTheme
 import org.maplibre.android.MapLibre
 
 /**
- * Single-Activity, die den NavController und den [CreateGameViewModel] initialisiert
+ * Single-Activity, die den NavController und den [GameViewModel] initialisiert
  * sowie MapLibre und das App-Theme konfiguriert.
  *
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
@@ -44,7 +44,7 @@ import org.maplibre.android.MapLibre
  */
 class MainActivity : ComponentActivity() {
     private val firebaseGateway = FirebaseGateway(FirebaseFirestore.getInstance())
-    private val gameLobbyViewModel: CreateGameViewModel by viewModels {
+    private val gameLobbyViewModel: GameViewModel by viewModels {
         GameViewModelFactory(
             gameCatalog = firebaseGateway, playerCatalog = firebaseGateway
         )
@@ -86,7 +86,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNavigation(
     navController: NavHostController,
-    viewModel: CreateGameViewModel,
+    viewModel: GameViewModel,
     modifier: Modifier = Modifier,
     firebaseGateway: FirebaseGateway,
 ) {

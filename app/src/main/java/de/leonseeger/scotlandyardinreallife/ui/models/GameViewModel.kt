@@ -35,7 +35,7 @@ import org.maplibre.turf.TurfJoins
  *
  * @author Leon Seeger & Jannes Schophuis
  */
-class CreateGameViewModel(
+class GameViewModel(
     private val gameCatalog: GameCatalog, private val playerCatalog: PlayerCatalog
 ) : ViewModel() {
     private val _gameState = MutableStateFlow<Game?>(null)

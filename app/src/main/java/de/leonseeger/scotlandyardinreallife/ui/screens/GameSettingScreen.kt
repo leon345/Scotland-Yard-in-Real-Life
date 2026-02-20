@@ -38,7 +38,7 @@ import de.leonseeger.scotlandyardinreallife.ui.component.NumericTextField
 import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
 import de.leonseeger.scotlandyardinreallife.ui.component.SecondaryButton
 import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle
-import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.ui.models.GameViewModel
 
 /**
  * Composable-Screen, der die Konfiguration der [GameSettings] mit validierten
@@ -50,7 +50,7 @@ import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
  */
 @Composable
 fun GameSettingScreen(
-    viewModel: CreateGameViewModel, modifier: Modifier = Modifier, onNavigateBack: () -> Unit
+    viewModel: GameViewModel, modifier: Modifier = Modifier, onNavigateBack: () -> Unit
 ) {
     val currentSetting by viewModel.gameSettings.collectAsState()
 

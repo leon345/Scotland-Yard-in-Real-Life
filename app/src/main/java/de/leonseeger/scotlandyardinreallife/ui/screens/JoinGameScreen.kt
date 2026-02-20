@@ -26,7 +26,7 @@ import de.leonseeger.scotlandyardinreallife.ui.component.CustomTextField
 import de.leonseeger.scotlandyardinreallife.ui.component.ErrorText
 import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
 import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle
-import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.ui.models.GameViewModel
 
 /**
  * Composable-Screen, der die Eingabe eines Spielcodes zum Beitreten eines
@@ -39,7 +39,7 @@ import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
 @Composable
 fun JoinGameScreen(
     navController: NavController,
-    viewModel: CreateGameViewModel,
+    viewModel: GameViewModel,
     modifier: Modifier = Modifier
 ) {
     val isLoading by viewModel.isLoading.collectAsState()

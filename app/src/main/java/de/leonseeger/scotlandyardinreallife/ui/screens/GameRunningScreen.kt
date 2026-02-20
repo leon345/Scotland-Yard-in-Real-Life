@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -46,7 +45,7 @@ import de.leonseeger.scotlandyardinreallife.ui.component.CenteredLoadingIndicato
 import de.leonseeger.scotlandyardinreallife.ui.component.EndGameDialog
 import de.leonseeger.scotlandyardinreallife.ui.component.PlayerOutOfBoundsNotification
 import de.leonseeger.scotlandyardinreallife.ui.component.gamemap.PlayMapData
-import de.leonseeger.scotlandyardinreallife.ui.models.CreateGameViewModel
+import de.leonseeger.scotlandyardinreallife.ui.models.GameViewModel
 import de.leonseeger.scotlandyardinreallife.ui.models.LocationPermissionState
 import de.leonseeger.scotlandyardinreallife.ui.models.MapLocationViewModel
 import de.leonseeger.scotlandyardinreallife.ui.models.isPointInsidePolygon
@@ -62,7 +61,7 @@ import org.maplibre.android.geometry.LatLng
  */
 @Composable
 fun GameRunningScreen(
-    viewModel: CreateGameViewModel,
+    viewModel: GameViewModel,
     mapLocationModel: MapLocationViewModel = viewModel(),
     onGameEnd: (PlayerRole?) -> Unit = {}
 ) {
@@ -122,7 +121,7 @@ fun GameRunningScreen(
  */
 @Composable
 fun RunningGameScreenComponent(
-    viewModel: CreateGameViewModel,
+    viewModel: GameViewModel,
     mapLocationModel: MapLocationViewModel,
     serviceContext: Context = LocalContext.current,
     onGameEnd: (PlayerRole?) -> Unit = {}
@@ -153,7 +152,7 @@ fun RunningGameScreenComponent(
 fun GameMap(
     startLocation: Location,
     mapData: PlayMapData,
-    viewModel: CreateGameViewModel,
+    viewModel: GameViewModel,
     serviceContext: Context = LocalContext.current,
     onGameEnd: (PlayerRole?) -> Unit = {}
 ) {
