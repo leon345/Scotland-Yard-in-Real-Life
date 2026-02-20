@@ -19,15 +19,26 @@ Fastalne kann unter macos mit [Homebrew](https://brew.sh/), einem Paketmanger in
 brew install fastlane`
 
 
-Für andere Betriebsysteme  kann die offizielle Instalationanleitung unter https://docs.fastlane.tools/ verwendet werden. 
+Für andere Betriebsysteme kann die offizielle Instalationanleitung unter https://docs.fastlane.tools/ verwendet werden. 
 
 ### Einrichtung
-Für die Bereitstellung der muss im Verzeichnis .secure_files ein Signierungsschlüssel angelegt werden sowie die Datei release-keystore.properties konfiguirert werden. 
 
+Für die Bereitstellung muss im Verzeichnis .secure_files/ ein Signierungsschlüssel hinterlegt sowie die Datei release-keystore.properties konfiguriert werden.
+
+1. Signierungsschlüssel anlegen
+
+Den Keystore unter folgendem Pfad ablegen:
+
+text
+.secure_files/release-keystore.jks
+
+2. release-keystore.properties konfigurieren
+
+text
 storeFile=.secure_files/release-keystore.jks
-storePassword=
+storePassword=<Passwort>
 keyAlias=release
-keyPassword=
+keyPassword=<Passwort>
 
 
 
