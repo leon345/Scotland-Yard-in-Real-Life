@@ -283,6 +283,19 @@ class CreateGameViewModel(
     }
 
     /**
+     * Pauses location updates for 3 minutes and then restores normal speed.
+     */
+    fun triggerBanditHideAbility() {
+        viewModelScope.launch {
+            stopLocationServices(serviceContext)
+
+            delay(3 * 60 * 1000L)
+
+            startLocationServices(serviceContext)
+        }
+    }
+
+    /**
      * Starts the Location service and primes the Update interval based on the player role.
      * Registers a callback to determine if player is in bounds
      */
