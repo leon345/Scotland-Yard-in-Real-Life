@@ -26,4 +26,24 @@
     <string name="join_button">Rejoindre</string>
     <string name="loading">Chargement…</string>
     <string name="invalid_game_code_error">Le code du jeu n\'est pas valide</string>
+
+
+    <string name="confirm">Confirmer</string>
+    <string name="define_playarea">Définir la zone de jeu</string>
+
+
+    <string name="bandit">Bandit</string>
+    <string name="found">Trouvé !</string>
+    <string name="confirm_found">Oui, trouvé !</string>
+    <string name="abort">Abandonner</string>
+    <string name="foud_question">Avez-vous été trouvé ?</string>
+    <string name="back_home">Retour au menu principal</string>
+    <string name="game_over_message">Fin de partie</string>
+    <string name="end_game_question">Terminer la partie ?</string>
+    <string name="poly_needs_more_points">Le polygone nécessite plus de points</string>
+    <string name="save">Enregistrer</string>
+    <string name="create_game">Créer une nouvelle partie</string>
+    <string name="join_game">Rejoindre une partie</string>
+    <string name="game_paused">Partie en pause</string>
+    <string name="player_out_of_bounds">Un joueur est hors limites</string>
 </resources>
