@@ -12,8 +12,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Undo
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -153,6 +159,7 @@ fun GameMap(
 ) {
     var openEndDialog by remember { mutableStateOf(false) }
     var playerOutOfBounds by remember { mutableStateOf(false) }
+    var abilityUsed by remember { mutableStateOf(false) }
 
     val players by viewModel.players.collectAsState()
     var mapReady by remember { mutableStateOf(false) }
@@ -211,6 +218,28 @@ fun GameMap(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium
                 )
+            }
+            if (playerRole == PlayerRole.BANDIT) {
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(bottom = 20.dp)
+                ) {
+
+                    IconButton(
+                        colors = IconButtonColors(colorResource(R.color.detective_color), contentColor = colorResource(R.color.neon_yellow),
+                            disabledContainerColor = colorResource(R.color.grey), disabledContentColor = colorResource(R.color.black)),
+                        enabled = !abilityUsed,
+                        onClick = {
+                            viewModel.triggerBanditHideAbility()
+                            abilityUsed = true
+                        }) {
+                        Icon(
+                            imageVector = Icons.Filled.VisibilityOff,
+                            contentDescription = "Hide"
+                        )
+                    }
+                }
             }
             Row(
                 modifier = Modifier
