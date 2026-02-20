@@ -50,4 +50,6 @@ Die Fastlane kann mit
 `bash
 fastlane deploy`
 
+installiert werden.
+
     
