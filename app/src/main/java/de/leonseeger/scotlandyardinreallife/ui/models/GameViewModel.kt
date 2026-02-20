@@ -327,6 +327,14 @@ class CreateGameViewModel(
 
     }
 
+    fun resetGameState() {
+        gameTimerJob?.cancel()
+        _gameState.value = null
+        _players.value = emptyList()
+        _currentPlayerId.value = null
+        _error.value = null
+    }
+
     fun clearError() {
         _error.value = null
     }
