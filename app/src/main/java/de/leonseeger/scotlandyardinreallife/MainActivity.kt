@@ -195,7 +195,10 @@ fun AppNavigation(
             GameEndScreen(
                 winMsg = msg,
                 onBackHome = {
-                    navController.navigate(NavigationRoutes.HOME)
+                    viewModel.resetGameState()
+                    navController.navigate(NavigationRoutes.HOME){
+                        popUpTo(NavigationRoutes.HOME) { inclusive = true }
+                    }
                 }
             )
         }
