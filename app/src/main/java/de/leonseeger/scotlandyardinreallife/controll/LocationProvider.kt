@@ -15,7 +15,7 @@ import kotlin.coroutines.resume
  * Stellt den aktuellen GPS-Standort des Geräts bereit und abstrahiert den Zugriff
  * auf den [com.google.android.gms.location.FusedLocationProviderClient] von Google Play Services.
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
- * @author TODO Author
+ * @author Jannes Schophuis
  */
 
 class LocationProvider(private val context: Context) {

@@ -12,11 +12,11 @@ import kotlinx.coroutines.launch
 
 /**
  * ViewModel, das den aktuellen GPS-Standort und den Berechtigungsstatus für
- * Standortzugriffe über den [LocationProvider] verwaltet.
+ * Standortzugriffe über den [LocationProvider] verwaltet. Genutzt zum bestimmen der Karten Startposition
  *
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
  *
- * @author TODO Author
+ * @author Jannes Schophuis
  */
 class MapLocationViewModel(private val context: Application) : AndroidViewModel(context) {
 
@@ -67,7 +67,7 @@ class MapLocationViewModel(private val context: Application) : AndroidViewModel(
  *
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
  *
- * @author TODO Author
+ * @author Jannes Schophuis
  */
 sealed interface LocationPermissionState {
     object Granted : LocationPermissionState

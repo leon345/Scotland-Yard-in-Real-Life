@@ -148,7 +148,7 @@ class LocationService : Service() {
             .setContentTitle(getString(R.string.location_tracking_notification_title))
             .setContentText(getString(R.string.location_tracking_notification_text))
             .setSmallIcon(android.R.drawable.ic_menu_mylocation)
-            .setContentIntent(pendingIntent) //TODO App Logo
+            .setContentIntent(pendingIntent)
             .setOngoing(true).setPriority(
                 NotificationCompat.PRIORITY_LOW
             ).build()

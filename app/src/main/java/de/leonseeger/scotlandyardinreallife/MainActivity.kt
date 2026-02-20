@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
  *
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
  *
- * @author TODO Author
+ * @author Leon Seeger & Jannes Schophuis
  */
 
 @Composable

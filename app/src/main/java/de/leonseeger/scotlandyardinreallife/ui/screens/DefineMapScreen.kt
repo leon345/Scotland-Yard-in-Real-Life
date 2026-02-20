@@ -46,7 +46,7 @@ import org.maplibre.geojson.Point
  *
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
  *
- * @author TODO Author
+ * @author Jannes Schophuis
  */
 @Composable
 fun DefineMapScreen(
@@ -87,7 +87,7 @@ fun DefineMapScreen(
  *
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
  *
- * @author TODO Author
+ * @author Jannes Schophuis
  */
 @Composable
 fun DefiningMap(viewModel: MapLocationViewModel, onMapDefined: (List<Point>) -> Unit) {
@@ -111,7 +111,7 @@ fun DefiningMap(viewModel: MapLocationViewModel, onMapDefined: (List<Point>) -> 
  *
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
  *
- * @author TODO Author
+ * @author Jannes Schophuis
  */
 @Composable
 fun PlayareaDefinitionMap(

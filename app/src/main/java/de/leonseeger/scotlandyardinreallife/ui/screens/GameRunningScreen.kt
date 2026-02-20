@@ -58,7 +58,7 @@ import org.maplibre.android.geometry.LatLng
  *
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
  *
- * @author TODO Author
+ * @author Jannes Schophuis
  */
 @Composable
 fun GameRunningScreen(
@@ -118,7 +118,7 @@ fun GameRunningScreen(
  *
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
  *
- * @author TODO Author
+ * @author Jannes Schophuis
  */
 @Composable
 fun RunningGameScreenComponent(
@@ -147,7 +147,7 @@ fun RunningGameScreenComponent(
  *
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
  *
- * @author TODO Author
+ * @author Jannes Schophuis
  */
 @Composable
 fun GameMap(

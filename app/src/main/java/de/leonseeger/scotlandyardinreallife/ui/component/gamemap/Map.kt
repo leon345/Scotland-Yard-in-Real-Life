@@ -40,7 +40,7 @@ import org.maplibre.geojson.Polygon
  *
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
  *
- * @author TODO Author
+ * @author Jannes Schophuis
  */
 class PlayMapData {
     private val polygonMapSrcName = "playarea-src"

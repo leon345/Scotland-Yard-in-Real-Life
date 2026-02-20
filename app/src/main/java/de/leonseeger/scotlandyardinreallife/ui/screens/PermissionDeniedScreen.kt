@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
  *
  * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
  *
- * @author TODO Author
+ * @author Jannes Schophuis
  */
 @Composable
 fun PermissionDeniedScreen (){
