@@ -31,7 +31,6 @@ Für die Bereitstellung über die Fastlane Lane Beta  muss im Verzeichnis .secur
 
 Den Keystore unter folgendem Pfad ablegen:
 
-text
 .secure_files/release-keystore.jks
 
 2. release-keystore.properties konfigurieren
