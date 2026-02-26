@@ -17,4 +17,28 @@
     <string name="location_tracking_channel_description">Shows that your position is being tracked</string>
     <string name="location_tracking_notification_title">Scotland Yard - GPS Tracking</string>
     <string name="location_tracking_notification_text">Your position is being tracked during the game</string>
+
+    <!-- Defining Play area -->
+    <string name="confirm">Confirm</string>
+    <string name="define_playarea" >Define play area</string>
+
+    <string name="join_game_title">Join Game</string>
+    <string name="game_code_label">Game Code</string>
+    <string name="join_button">Join</string>
+    <string name="loading">Loading…</string>
+    <string name="invalid_game_code_error">The game code is invalid. </string>
+    <string name="bandit">Bandit</string>
+    <string name="found">Found!</string>
+    <string name="confirm_found">Yes, found!</string>
+    <string name="abort">Abort</string>
+    <string name="foud_question">Have you been found?</string>
+    <string name="back_home">Back to Main menu</string>
+    <string name="game_over_message">Game Over</string>
+    <string name="end_game_question">End game?</string>
+    <string name="poly_needs_more_points">Polygon needs more Points</string>
+    <string name="save">Save</string>
+    <string name="create_game">Create new Game</string>
+    <string name="join_game">Join game</string>
+    <string name="game_paused">Game Paused</string>
+    <string name="player_out_of_bounds">A player is out of bounds</string>
 </resources>

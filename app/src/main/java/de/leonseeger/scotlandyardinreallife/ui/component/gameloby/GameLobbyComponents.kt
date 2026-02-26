@@ -1,5 +1,6 @@
 package de.leonseeger.scotlandyardinreallife.ui.component.gameloby
 
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,19 +28,38 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.leonseeger.scotlandyardinreallife.R
-import de.leonseeger.scotlandyardinreallife.game.entity.Player
+import de.leonseeger.scotlandyardinreallife.entity.Player
 import de.leonseeger.scotlandyardinreallife.ui.component.BodyText
 import de.leonseeger.scotlandyardinreallife.ui.component.LabelText
 
+/**
+ * Composable, das den teilbaren Einladungscode eines [Game] als anklickbare Karte darstellt
+ * und den nativen Android-Share-Dialog öffnet.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun InvitationCodeCard(gameId: String) {
+    val context = LocalContext.current
+    val shareTitle = stringResource(R.string.share_code_message)
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, gameId)
+                }
+                context.startActivity(Intent.createChooser(sendIntent, shareTitle))
+            },
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer),
         shape = RoundedCornerShape(12.dp)
     ) {
@@ -56,7 +76,7 @@ fun InvitationCodeCard(gameId: String) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = gameId,
-                style = MaterialTheme.typography.headlineLarge,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -71,6 +91,14 @@ fun InvitationCodeCard(gameId: String) {
     }
 }
 
+/**
+ * Composable, das die Liste aller [Player] eines [Game] in einer scrollbaren
+ * LazyColumn rendert und den Host visuell hervorhebt.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun PlayersList(
     players: List<Player>,
@@ -119,6 +147,14 @@ fun PlayersList(
     }
 }
 
+/**
+ * Composable, das einen einzelnen [Player] als Listenelement mit Rolle
+ * und optionaler Host-Kennzeichnung darstellt.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun PlayerItem(player: Player, isOwner: Boolean, onClick: () -> Unit = {}) {
     Card(
@@ -150,7 +186,7 @@ fun PlayerItem(player: Player, isOwner: Boolean, onClick: () -> Unit = {}) {
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 BodyText(
-                    text = stringResource(R.string.player_id, player.id.take(6)),
+                    text = stringResource(R.string.player_id, player.id),
                     fontWeight = FontWeight.Medium
                 )
 
