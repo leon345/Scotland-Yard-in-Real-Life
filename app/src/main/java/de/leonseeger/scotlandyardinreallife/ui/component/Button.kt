@@ -7,14 +7,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import de.leonseeger.scotlandyardinreallife.R
 
+/**
+ * Composable, das einen primären Button im App-Design mit optionalem Icon rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger & Jannes Schophuis
+ */
 @Composable
 fun PrimaryButton(
     text: String,
@@ -30,8 +37,8 @@ fun PrimaryButton(
             .height(56.dp),
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
+            containerColor = colorResource(R.color.detective_color_dark),
+            contentColor = colorResource(R.color.neon_yellow)
         )
     ) {
         icon?.let {
@@ -46,6 +53,13 @@ fun PrimaryButton(
     }
 }
 
+/**
+ * Composable, das einen sekundären Button im App-Design mit optionalem Icon rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Jannes Schophuis
+ */
 @Composable
 fun SecondaryButton(
     text: String,
@@ -54,13 +68,16 @@ fun SecondaryButton(
     enabled: Boolean = true,
     icon: ImageVector? = null
 ) {
-    OutlinedButton(
+    Button(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
         enabled = enabled,
-        contentPadding = ButtonDefaults.ButtonWithIconContentPadding
+        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorResource(R.color.grey_transparent),
+            contentColor = colorResource(R.color.detective_color_dark))
     ) {
         icon?.let {
             Icon(

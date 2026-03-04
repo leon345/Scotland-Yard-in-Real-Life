@@ -12,13 +12,22 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import de.leonseeger.scotlandyardinreallife.R
 import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
 import de.leonseeger.scotlandyardinreallife.ui.component.SecondaryButton
 import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle
 import de.leonseeger.scotlandyardinreallife.ui.component.SubheadingText
 
-
+/**
+ * Composable-Screen, der den Haupteinstiegspunkt der App mit Optionen zum
+ * Erstellen und Beitreten eines [Game] rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun HomeScreen(
     onCreateGame: () -> Unit,
@@ -44,7 +53,7 @@ fun HomeScreen(
 
 
         PrimaryButton(
-            text = "Spiel erstellen",
+            text = stringResource(R.string.create_game),
             onClick = onCreateGame,
             icon = Icons.Default.Add
         )
@@ -53,7 +62,7 @@ fun HomeScreen(
 
 
         SecondaryButton(
-            text = "Spiel beitreten",
+            text = stringResource(R.string.join_game),
             onClick = onJoinGame,
             icon = Icons.Default.PlayArrow
         )

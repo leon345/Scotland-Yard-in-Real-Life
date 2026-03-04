@@ -9,25 +9,59 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import de.leonseeger.scotlandyardinreallife.R
+import de.leonseeger.scotlandyardinreallife.navigation.NavigationRoutes
 import de.leonseeger.scotlandyardinreallife.ui.component.CustomTextField
 import de.leonseeger.scotlandyardinreallife.ui.component.ErrorText
 import de.leonseeger.scotlandyardinreallife.ui.component.PrimaryButton
 import de.leonseeger.scotlandyardinreallife.ui.component.SectionTitle
+import de.leonseeger.scotlandyardinreallife.ui.models.GameViewModel
 
+/**
+ * Composable-Screen, der die Eingabe eines Spielcodes zum Beitreten eines
+ * bestehenden [Game] und die anschließende Navigation zur Lobby rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun JoinGameScreen(
-    onJoinWithCode: (String) -> Unit,
+    navController: NavController,
+    viewModel: GameViewModel,
     modifier: Modifier = Modifier
 ) {
+    val isLoading by viewModel.isLoading.collectAsState()
+    val error by viewModel.error.collectAsState()
+    val gameState by viewModel.gamestate.collectAsState()
+
     var gameCode by remember { mutableStateOf("") }
-    var showError by remember { mutableStateOf(false) }
+
+    LaunchedEffect(gameState) {
+        gameState?.let { game ->
+            if (error == null) {
+                navController.navigate(
+                    NavigationRoutes.gameLobby(mode = "JOIN", gameCode = game.id)
+                ) {
+                    popUpTo(NavigationRoutes.JOIN_GAME) { inclusive = true }
+                }
+            }
+        }
+    }
+
+
+
 
     Column(
         modifier = modifier
@@ -36,7 +70,7 @@ fun JoinGameScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        SectionTitle(text = "Spiel beitreten")
+        SectionTitle(text = stringResource(R.string.join_game_title))
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -44,31 +78,28 @@ fun JoinGameScreen(
             value = gameCode,
             onValueChange = {
                 gameCode = it.trim()
-                showError = false
+                viewModel.clearError()
             },
-            label = "Spiel-Code",
-            isError = showError,
-            errorMessage = if (showError) "Bitte einen gültigen Code eingeben" else null
+            label = stringResource(R.string.game_code_label),
+            isError = error != null,
         )
 
-        if (showError) {
+        if (error != null) {
             Spacer(modifier = Modifier.height(8.dp))
-            ErrorText(text = "Der Spiel-Code muss mindestens 6 Zeichen lang sein")
+            ErrorText(text = stringResource(R.string.invalid_game_code_error))
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         PrimaryButton(
-            text = "Beitreten",
+            text = if (isLoading) stringResource(R.string.loading) else stringResource(R.string.join_button),
             onClick = {
-                if (gameCode.length >= 6) {
-                    onJoinWithCode(gameCode)
-                } else {
-                    showError = true
-                }
+
+                viewModel.joinGame(gameCode, "0")
+
             },
             icon = Icons.Default.PlayArrow,
-            enabled = gameCode.isNotEmpty()
+            enabled = gameCode.length >= 6 && !isLoading
         )
     }
 }

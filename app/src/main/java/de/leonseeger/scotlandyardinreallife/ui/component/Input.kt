@@ -10,6 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+/**
+ * Composable, das ein einzeiliges Texteingabefeld mit optionaler Fehleranzeige im Material-Design rendert.
+ *
+ * Dokumentation erstellt mit KI (Perplexity – Claude Sonnet 4.6).
+ *
+ * @author Leon Seeger
+ */
 @Composable
 fun CustomTextField(
     value: String,
@@ -40,3 +47,4 @@ fun CustomTextField(
         }
     }
 }
+
